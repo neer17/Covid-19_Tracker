@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainActivity">
+    tools:context=".ui.main.CovidUpdatesFragment">
 
-    <fragment
-        android:id="@+id/main_fragment"
-        android:name="com.example.mvi_scaffolding.ui.main.CovidUpdatesFragment"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/covid_updates_frag_rv"
+        tools:listitem="@layout/layout_covid_updates_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
