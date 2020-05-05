@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 class NationalData(
     @SerializedName("statewise")
     @Expose
-    val nationalData: List<NationalDataResponse>
+    val nationWideData: List<NationalDataResponse>
 )
 
 data class NationalDataResponse(

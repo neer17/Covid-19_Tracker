@@ -1,6 +1,7 @@
 package com.example.mvi_scaffolding.ui.main
 
 import androidx.lifecycle.LiveData
+import com.example.mvi_scaffolding.api.main.network_responses.NationalData
 import com.example.mvi_scaffolding.repository.main.MainRepository
 import com.example.mvi_scaffolding.ui.BaseViewModel
 import com.example.mvi_scaffolding.ui.DataState
@@ -36,5 +37,11 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
 
     fun cancelActiveJobs(){
         mainRepository.cancelActiveJobs() // cancel active jobs
+    }
+
+    fun setNationalData(nationalData: NationalData) {
+        val update = getCurrentViewStateOrNew()
+        update.nationalData = nationalData
+        _viewState.value = update
     }
 }

@@ -1,8 +1,6 @@
 package com.example.mvi_scaffolding.di
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -26,7 +24,7 @@ class AppModule{
     @Singleton
     @Provides
     fun provideGsonBuilder(): Gson {
-        return GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
+        return GsonBuilder().create()
     }
 
     @Singleton
