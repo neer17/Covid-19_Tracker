@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/covidUpdatesFragment">
 
+    <fragment
+        android:id="@+id/covidUpdatesFragment"
+        android:name="com.example.mvi_scaffolding.ui.main.CovidUpdatesFragment"
+        android:label="fragment_covid_updates"
+        tools:layout="@layout/fragment_covid_updates" >
+        <action
+            android:id="@+id/action_covidUpdatesFragment_to_nationWideDataDisplayFragment"
+            app:destination="@id/nationWideDataDisplayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nationWideDataDisplayFragment"
+        android:name="com.example.mvi_scaffolding.ui.main.NationWideDataDisplayFragment"
+        android:label="fragment_nation_wide_data_display"
+        tools:layout="@layout/fragment_nation_wide_data_display" />
 </navigation>

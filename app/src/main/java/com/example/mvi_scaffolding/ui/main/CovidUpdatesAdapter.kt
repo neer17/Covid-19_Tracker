@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
 
-class CovidUpdatesAdapter :
+class CovidUpdatesAdapter(val getUpdatedStringsCallback: (position: Int) -> Array<String>) :
     ListAdapter<NationalDataResponse, CovidUpdatesAdapter.ViewHolder>(CovidUpdatesAdapter.DIFF_CALLBACK) {
 
     companion object {
@@ -38,54 +38,20 @@ class CovidUpdatesAdapter :
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val updatedStrings: Array<String> = getUpdatedStringsCallback(position)
+        holder.bind(getItem(position), updatedStrings)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: NationalDataResponse) = with(itemView) {
+
+        fun bind(item: NationalDataResponse, updatedStrings: Array<String>) = with(itemView) {
             itemView.findViewById<TextView>(R.id.state_name).text = item.state
             itemView.findViewById<TextView>(R.id.confirmed_total).text = item.confirmed
             itemView.findViewById<TextView>(R.id.recovered_total).text = item.recovered
             itemView.findViewById<TextView>(R.id.deceased_total).text = item.deaths
-
-            addIncDecSymbol(item)
-        }
-
-        private fun addIncDecSymbol(item: NationalDataResponse) {
-            var finalStringDeltaConfirmed = ""
-            var finalStringDeltaRecovered = ""
-            var finalStringDeltaDeceased = ""
-
-            if (item.deltaconfirmed.toInt() > 0) {
-                val upArrowHexCode = "A71B".toInt(16).toChar()
-                finalStringDeltaConfirmed = upArrowHexCode + " " + item.deltaconfirmed
-            } else if (item.deltaconfirmed.toInt() < 0) {
-                val downArrowHexCode = "A71C".toInt(16).toChar()
-                finalStringDeltaConfirmed = downArrowHexCode + " " + item.deltaconfirmed
-            }
-
-            if (item.deltarecovered.toInt() > 0) {
-                val upArrowHexCode = "A71B".toInt(16).toChar()
-                finalStringDeltaRecovered = upArrowHexCode + " " + item.deltarecovered
-            } else if (item.deltaconfirmed.toInt() < 0) {
-                val downArrowHexCode = "A71C".toInt(16).toChar()
-                finalStringDeltaRecovered = downArrowHexCode + " " + item.deltarecovered
-            }
-
-            if (item.deltadeaths.toInt() > 0) {
-                val upArrowHexCode = "A71B".toInt(16).toChar()
-                finalStringDeltaDeceased = upArrowHexCode + " " + item.deltadeaths
-            } else if (item.deltadeaths.toInt() < 0) {
-                val downArrowHexCode = "A71C".toInt(16).toChar()
-                finalStringDeltaDeceased = downArrowHexCode + " " + item.deltadeaths
-            }
-
-            itemView.findViewById<TextView>(R.id.confirmed_increase).text =
-                finalStringDeltaConfirmed
-            itemView.findViewById<TextView>(R.id.deceased_increase).text =
-                finalStringDeltaDeceased
-            itemView.findViewById<TextView>(R.id.recovered_increase).text =
-                finalStringDeltaRecovered
+            itemView.findViewById<TextView>(R.id.confirmed_increase).text = updatedStrings[0]
+            itemView.findViewById<TextView>(R.id.recovered_increase).text = updatedStrings[1]
+            itemView.findViewById<TextView>(R.id.deceased_increase).text = updatedStrings[2]
         }
     }
 }

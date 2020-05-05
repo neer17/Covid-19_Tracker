@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 
 abstract class BaseViewModel<StateEvent, ViewState> : ViewModel()
 {
-    private val TAG = "AppDebug: " + BaseViewModel::class.java.simpleName
+    val TAG = "AppDebug: " + BaseViewModel::class.java.simpleName
 
     protected val _stateEvent: MutableLiveData<StateEvent> = MutableLiveData()
     protected val _viewState: MutableLiveData<ViewState> = MutableLiveData()

@@ -1,13 +1,15 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
 import com.example.mvi_scaffolding.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-open class BaseMainFragment : DaggerFragment() {
+abstract class BaseMainFragment : DaggerFragment() {
     val TAG = "AppDebug: " + BaseMainFragment::class.java.simpleName
 
     @Inject
@@ -17,7 +19,11 @@ open class BaseMainFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
+        Log.d(TAG, "onViewCreated: ")
+        
+        viewModel = activity?.run {
+            ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
     }
 
     fun cancelActiveJobs(){
@@ -25,6 +31,38 @@ open class BaseMainFragment : DaggerFragment() {
         // Note: If you wanted a particular request to continue even if the fragment was destroyed, you could write a
         //       special condition in the repository or something.
         viewModel.cancelActiveJobs()
+    }
+
+    fun addIncDecSymbol(item: NationalDataResponse): Array<String> {
+        var finalStringDeltaConfirmed = ""
+        var finalStringDeltaRecovered = ""
+        var finalStringDeltaDeceased = ""
+
+        if (item.deltaconfirmed.toInt() > 0) {
+            val upArrowHexCode = "A71B".toInt(16).toChar()
+            finalStringDeltaConfirmed = upArrowHexCode + " " + item.deltaconfirmed
+        } else if (item.deltaconfirmed.toInt() < 0) {
+            val downArrowHexCode = "A71C".toInt(16).toChar()
+            finalStringDeltaConfirmed = downArrowHexCode + " " + item.deltaconfirmed
+        }
+
+        if (item.deltarecovered.toInt() > 0) {
+            val upArrowHexCode = "A71B".toInt(16).toChar()
+            finalStringDeltaRecovered = upArrowHexCode + " " + item.deltarecovered
+        } else if (item.deltaconfirmed.toInt() < 0) {
+            val downArrowHexCode = "A71C".toInt(16).toChar()
+            finalStringDeltaRecovered = downArrowHexCode + " " + item.deltarecovered
+        }
+
+        if (item.deltadeaths.toInt() > 0) {
+            val upArrowHexCode = "A71B".toInt(16).toChar()
+            finalStringDeltaDeceased = upArrowHexCode + " " + item.deltadeaths
+        } else if (item.deltadeaths.toInt() < 0) {
+            val downArrowHexCode = "A71C".toInt(16).toChar()
+            finalStringDeltaDeceased = downArrowHexCode + " " + item.deltadeaths
+        }
+
+       return arrayOf(finalStringDeltaConfirmed, finalStringDeltaRecovered, finalStringDeltaDeceased)
     }
 
 }

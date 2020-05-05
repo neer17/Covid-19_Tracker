@@ -1,5 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
 import com.example.mvi_scaffolding.repository.main.MainRepository
@@ -32,6 +33,8 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
 
     override fun onCleared() {
         super.onCleared()
+        Log.d(TAG, "onCleared: ")
+        
         cancelActiveJobs()
     }
 

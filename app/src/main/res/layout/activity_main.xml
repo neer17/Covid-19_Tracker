@@ -8,7 +8,9 @@
 
     <fragment
         android:id="@+id/main_fragment"
-        android:name="com.example.mvi_scaffolding.ui.main.CovidUpdatesFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav_graph"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
