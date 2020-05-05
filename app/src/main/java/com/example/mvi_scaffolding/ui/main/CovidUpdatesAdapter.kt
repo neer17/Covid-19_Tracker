@@ -45,11 +45,47 @@ class CovidUpdatesAdapter :
         fun bind(item: NationalDataResponse) = with(itemView) {
             itemView.findViewById<TextView>(R.id.state_name).text = item.state
             itemView.findViewById<TextView>(R.id.confirmed_total).text = item.confirmed
-            itemView.findViewById<TextView>(R.id.confirmed_increase).text = item.deltaconfirmed
             itemView.findViewById<TextView>(R.id.recovered_total).text = item.recovered
-            itemView.findViewById<TextView>(R.id.recovered_increase).text = item.deltarecovered
             itemView.findViewById<TextView>(R.id.deceased_total).text = item.deaths
-            itemView.findViewById<TextView>(R.id.deceased_increase).text = item.deltadeaths
+
+            addIncDecSymbol(item)
+        }
+
+        private fun addIncDecSymbol(item: NationalDataResponse) {
+            var finalStringDeltaConfirmed = ""
+            var finalStringDeltaRecovered = ""
+            var finalStringDeltaDeceased = ""
+
+            if (item.deltaconfirmed.toInt() > 0) {
+                val upArrowHexCode = "A71B".toInt(16).toChar()
+                finalStringDeltaConfirmed = upArrowHexCode + " " + item.deltaconfirmed
+            } else if (item.deltaconfirmed.toInt() < 0) {
+                val downArrowHexCode = "A71C".toInt(16).toChar()
+                finalStringDeltaConfirmed = downArrowHexCode + " " + item.deltaconfirmed
+            }
+
+            if (item.deltarecovered.toInt() > 0) {
+                val upArrowHexCode = "A71B".toInt(16).toChar()
+                finalStringDeltaRecovered = upArrowHexCode + " " + item.deltarecovered
+            } else if (item.deltaconfirmed.toInt() < 0) {
+                val downArrowHexCode = "A71C".toInt(16).toChar()
+                finalStringDeltaRecovered = downArrowHexCode + " " + item.deltarecovered
+            }
+
+            if (item.deltadeaths.toInt() > 0) {
+                val upArrowHexCode = "A71B".toInt(16).toChar()
+                finalStringDeltaDeceased = upArrowHexCode + " " + item.deltadeaths
+            } else if (item.deltadeaths.toInt() < 0) {
+                val downArrowHexCode = "A71C".toInt(16).toChar()
+                finalStringDeltaDeceased = downArrowHexCode + " " + item.deltadeaths
+            }
+
+            itemView.findViewById<TextView>(R.id.confirmed_increase).text =
+                finalStringDeltaConfirmed
+            itemView.findViewById<TextView>(R.id.deceased_increase).text =
+                finalStringDeltaDeceased
+            itemView.findViewById<TextView>(R.id.recovered_increase).text =
+                finalStringDeltaRecovered
         }
     }
 }

@@ -8,8 +8,9 @@
 
     <TextView
         android:id="@+id/state_name"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:layout_marginStart="16dp"
         android:layout_marginTop="29dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,6 +25,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/state_name"
         app:layout_constraintStart_toEndOf="@+id/state_name"
         app:layout_constraintTop_toTopOf="@+id/state_name"
+        android:textColor="@color/red"
         tools:text="3000" />
 
     <TextView
@@ -35,14 +37,16 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/confirmed_total"
         app:layout_constraintTop_toBottomOf="@+id/confirmed_total"
+        android:textColor="@color/red"
         tools:text="100" />
 
     <TextView
         android:id="@+id/recovered_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        app:layout_constraintStart_toEndOf="@+id/confirmed_total"
+        android:layout_marginStart="120dp"
+        android:textColor="@color/green"
+        app:layout_constraintStart_toEndOf="@+id/state_name"
         app:layout_constraintTop_toTopOf="@+id/confirmed_total"
         tools:text="3000" />
 
@@ -55,14 +59,16 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/recovered_total"
         app:layout_constraintTop_toBottomOf="@+id/recovered_total"
+        android:textColor="@color/green"
         tools:text="100" />
 
     <TextView
         android:id="@+id/deceased_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        app:layout_constraintStart_toEndOf="@+id/recovered_total"
+        android:layout_marginStart="184dp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/state_name"
         app:layout_constraintTop_toTopOf="@+id/recovered_total"
         tools:text="3000" />
 
@@ -75,5 +81,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/deceased_total"
         app:layout_constraintTop_toBottomOf="@+id/deceased_total"
+        android:textColor="@color/black"
         tools:text="100" />
 </androidx.constraintlayout.widget.ConstraintLayout>
