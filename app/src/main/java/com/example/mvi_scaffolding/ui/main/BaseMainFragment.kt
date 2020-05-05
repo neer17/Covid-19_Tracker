@@ -44,7 +44,8 @@ abstract class BaseMainFragment : DaggerFragment() {
         } else if (item.deltaconfirmed.toInt() < 0) {
             val downArrowHexCode = "A71C".toInt(16).toChar()
             finalStringDeltaConfirmed = downArrowHexCode + " " + item.deltaconfirmed
-        }
+        } else
+            finalStringDeltaConfirmed = item.deltaconfirmed
 
         if (item.deltarecovered.toInt() > 0) {
             val upArrowHexCode = "A71B".toInt(16).toChar()
@@ -53,6 +54,8 @@ abstract class BaseMainFragment : DaggerFragment() {
             val downArrowHexCode = "A71C".toInt(16).toChar()
             finalStringDeltaRecovered = downArrowHexCode + " " + item.deltarecovered
         }
+        else
+            finalStringDeltaRecovered = item.deltarecovered
 
         if (item.deltadeaths.toInt() > 0) {
             val upArrowHexCode = "A71B".toInt(16).toChar()
@@ -61,6 +64,8 @@ abstract class BaseMainFragment : DaggerFragment() {
             val downArrowHexCode = "A71C".toInt(16).toChar()
             finalStringDeltaDeceased = downArrowHexCode + " " + item.deltadeaths
         }
+        else
+            finalStringDeltaDeceased = item.deltadeaths
 
        return arrayOf(finalStringDeltaConfirmed, finalStringDeltaRecovered, finalStringDeltaDeceased)
     }

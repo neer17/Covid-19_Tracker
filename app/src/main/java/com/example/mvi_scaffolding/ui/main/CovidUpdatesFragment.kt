@@ -71,6 +71,7 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
 
         //  for the state based on user's location
+        val stateName = data[1].state
         val stateConfirmedTotal = data[1].confirmed
         val stateRecoveredTotal = data[1].recovered
         val stateDeceasedTotal = data[1].deaths
@@ -80,6 +81,7 @@ class CovidUpdatesFragment : BaseMainFragment() {
         val stateRecoveredDelta = stateUpdatedStrings[1]
         val stateDeceasedDelta = stateUpdatedStrings[2]
 
+        view!!.findViewById<TextView>(R.id.card_state_name).text = stateName
         view!!.findViewById<TextView>(R.id.card_india_confirmed_total).text = indiaConfirmedTotal
         view!!.findViewById<TextView>(R.id.card_india_recovered_total).text = indiaRecoveredTotal
         view!!.findViewById<TextView>(R.id.card_india_deceased_total).text = indiaDeceasedTotal
