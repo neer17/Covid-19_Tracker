@@ -28,6 +28,12 @@ class MainModule {
 
 //    @MainScope
 //    @Provides
+//    fun provideLocationRequest(): LocationRequest {
+//        return LocationServices.getFusedLocationProviderClient()
+//    }
+
+//    @MainScope
+//    @Provides
 //    fun provideBlogPostDao(db: AppDatabase): BlogPostDao {
 //        return db.getBlogPostDao()
 //    }

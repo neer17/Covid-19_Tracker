@@ -134,4 +134,7 @@ dependencies {
     //  google nearby
     implementation "com.google.android.gms:play-services-nearby:$google_nearby"
 
+    //  google location api
+    implementation "com.google.android.gms:play-services-location:$google_location"
+
 }

@@ -1,5 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
@@ -45,6 +46,12 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
     fun setNationalData(nationalData: NationalData) {
         val update = getCurrentViewStateOrNew()
         update.nationalData = nationalData
+        _viewState.value = update
+    }
+
+    fun setCurrentLocation(location: Location) {
+        val update = getCurrentViewStateOrNew()
+        update.location = location
         _viewState.value = update
     }
 }

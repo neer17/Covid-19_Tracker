@@ -23,6 +23,7 @@ buildscript {
         ted_permission = '2.2.3'
         google_nearby = '17.0.0'
         google_play_services = '18.0.0'
+        google_location = '17.0.0'
     }
 
     repositories {

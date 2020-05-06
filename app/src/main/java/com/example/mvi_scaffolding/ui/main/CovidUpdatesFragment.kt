@@ -1,6 +1,9 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +13,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalDataEvent
+import com.google.android.gms.location.LocationServices
+import java.util.*
+
 
 class CovidUpdatesFragment : BaseMainFragment() {
+
+    lateinit var geocoder: Geocoder
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,8 +32,12 @@ class CovidUpdatesFragment : BaseMainFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        geocoder = Geocoder(activity, Locale.getDefault())
+
         //  making an event to trigger data request
         viewModel.setStateEvent(GetNationalDataEvent())
+
+        getUsersLocation()
 
         subscribeObservers()
 
@@ -48,17 +60,43 @@ class CovidUpdatesFragment : BaseMainFragment() {
             }
         })
 
+        //  observe data -> location -> update UI
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            viewState?.let { viewState ->
-                viewState.nationalData?.let {
+            viewState?.let { mainViewState ->
+                //  set data from api request
+                mainViewState.nationalData?.let { nationalData ->
+
 //                   Log.d(TAG, "subscribeObservers: nation wide data ${it.nationWideDataList}")
-                    updateCard(it.nationWideDataList)
+                    //  observing location
+                    mainViewState.location?.let {
+                        val state =
+                            geocoder.getFromLocation(it.latitude, it.longitude, 1)[0].adminArea
+                        Log.d(TAG, "subscribeObservers: state $state")
+
+                        updateCard(nationalData.nationWideDataList, state)
+                    } ?: updateCard(nationalData.nationWideDataList)
                 }
             }
         })
     }
 
-    private fun updateCard(data: List<NationalDataResponse>) {
+    private fun getUsersLocation() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(view!!.context)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                Log.d(TAG, "getUsersLocation: location $location")
+
+                location?.let {
+                    viewModel.setCurrentLocation(it)
+                }
+            }.addOnFailureListener { exception ->
+                Log.e(TAG, "getUsersLocation: error on getting location", exception)
+
+            }
+    }
+
+    //  update UI
+    private fun updateCard(data: List<NationalDataResponse>, state: String = "") {
         val indiaData = data[0]
         val indiaConfirmedTotal = indiaData.confirmed
         val indiaRecoveredTotal = indiaData.recovered
@@ -70,13 +108,18 @@ class CovidUpdatesFragment : BaseMainFragment() {
         val indiaDeceasedDelta = indiaUpdatedStrings[2]
 
 
-        //  for the state based on user's location
-        val stateName = data[1].state
-        val stateConfirmedTotal = data[1].confirmed
-        val stateRecoveredTotal = data[1].recovered
-        val stateDeceasedTotal = data[1].deaths
+        //  get data based on current location or data[1] by default
+        val dataOfCurrentState = if (state == "")
+            data[1]
+        else
+            getTheDataOfState(data, state)
 
-        val stateUpdatedStrings: Array<String> = addIncDecSymbol(data[1])
+        val stateName = dataOfCurrentState.state
+        val stateConfirmedTotal = dataOfCurrentState.confirmed
+        val stateRecoveredTotal = dataOfCurrentState.recovered
+        val stateDeceasedTotal = dataOfCurrentState.deaths
+
+        val stateUpdatedStrings: Array<String> = addIncDecSymbol(dataOfCurrentState)
         val stateConfirmedDelta = stateUpdatedStrings[0]
         val stateRecoveredDelta = stateUpdatedStrings[1]
         val stateDeceasedDelta = stateUpdatedStrings[2]
@@ -96,9 +139,21 @@ class CovidUpdatesFragment : BaseMainFragment() {
         view!!.findViewById<TextView>(R.id.card_state_deceased_delta).text = stateDeceasedDelta
     }
 
+    //  return NationalDataResponse based on current state
+    private fun getTheDataOfState(
+        data: List<NationalDataResponse>,
+        state: String
+    ): NationalDataResponse {
+        data.forEach {
+            if (state == it.state)
+                return it
+        }
+
+        return data[1]
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.cancelActiveJobs()
     }
-
 }
