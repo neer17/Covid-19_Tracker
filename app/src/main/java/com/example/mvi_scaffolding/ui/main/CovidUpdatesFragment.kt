@@ -3,6 +3,7 @@ package com.example.mvi_scaffolding.ui.main
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
-import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
+import com.example.mvi_scaffolding.models.NationalDataTable
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalDataEvent
 import com.google.android.gms.location.LocationServices
 import java.util.*
@@ -34,9 +35,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
         geocoder = Geocoder(activity, Locale.getDefault())
 
-        //  making an event to trigger data request
-        viewModel.setStateEvent(GetNationalDataEvent())
-
         getUsersLocation()
 
         subscribeObservers()
@@ -46,6 +44,12 @@ class CovidUpdatesFragment : BaseMainFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        //  making an event to trigger data request
+        viewModel.setStateEvent(GetNationalDataEvent())
+    }
+
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
@@ -53,7 +57,24 @@ class CovidUpdatesFragment : BaseMainFragment() {
                 it.data?.let {
                     it.getContentIfNotHandled()?.let {
                         it.nationalData?.let { nationalData ->
-                            viewModel.setNationalData(nationalData) //  updating view state
+//                            Log.d(TAG, "subscribeObservers: national data $nationalData")
+
+                            //  TODO: refactor, use datastatelistener in BaseActivity instead
+                            if (nationalData.nationWideDataList.isNotEmpty()) {
+                                viewModel.setNationalData(nationalData) //  updating view state
+                                viewModel.setInternetConnectivity(true)
+                            } else {
+                                val isAirplaneModeOn = Settings.System.getInt(
+                                    context!!.contentResolver,
+                                    Settings.Global.AIRPLANE_MODE_ON,
+                                    0
+                                ) != 0
+                                val isInternetOn = sessionManager.isConnectedToTheInternet()
+                                if (!isAirplaneModeOn || !isInternetOn) {
+                                    viewModel.setInternetConnectivity(false)
+                                }
+                            }
+
                         }
                     }
                 }
@@ -66,12 +87,16 @@ class CovidUpdatesFragment : BaseMainFragment() {
                 //  set data from api request
                 mainViewState.nationalData?.let { nationalData ->
 
-//                   Log.d(TAG, "subscribeObservers: nation wide data ${it.nationWideDataList}")
+                    Log.d(
+                        TAG,
+                        "subscribeObservers: nation wide data ${nationalData.nationWideDataList}"
+                    )
                     //  observing location
                     mainViewState.location?.let {
                         val state =
                             geocoder.getFromLocation(it.latitude, it.longitude, 1)[0].adminArea
-                        Log.d(TAG, "subscribeObservers: state $state")
+                        Log.d(TAG, "subscribeObservers: national data $nationalData")
+                        Log.d(TAG, "subscribeObservers: state: $state")
 
                         updateCard(nationalData.nationWideDataList, state)
                     } ?: updateCard(nationalData.nationWideDataList)
@@ -96,7 +121,7 @@ class CovidUpdatesFragment : BaseMainFragment() {
     }
 
     //  update UI
-    private fun updateCard(data: List<NationalDataResponse>, state: String = "") {
+    private fun updateCard(data: List<NationalDataTable>, state: String = "") {
         val indiaData = data[0]
         val indiaConfirmedTotal = indiaData.confirmed
         val indiaRecoveredTotal = indiaData.recovered
@@ -139,11 +164,11 @@ class CovidUpdatesFragment : BaseMainFragment() {
         view!!.findViewById<TextView>(R.id.card_state_deceased_delta).text = stateDeceasedDelta
     }
 
-    //  return NationalDataResponse based on current state
+    //  return NationalDataTable based on current state
     private fun getTheDataOfState(
-        data: List<NationalDataResponse>,
+        data: List<NationalDataTable>,
         state: String
-    ): NationalDataResponse {
+    ): NationalDataTable {
         data.forEach {
             if (state == it.state)
                 return it

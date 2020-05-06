@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
+import com.example.mvi_scaffolding.models.NationalDataTable
+import com.example.mvi_scaffolding.session.SessionManager
 import com.example.mvi_scaffolding.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -14,8 +15,10 @@ abstract class BaseMainFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
-
     lateinit var viewModel: MainViewModel
+
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,7 +36,7 @@ abstract class BaseMainFragment : DaggerFragment() {
         viewModel.cancelActiveJobs()
     }
 
-    fun addIncDecSymbol(item: NationalDataResponse): Array<String> {
+    fun addIncDecSymbol(item: NationalDataTable): Array<String> {
         var finalStringDeltaConfirmed = ""
         var finalStringDeltaRecovered = ""
         var finalStringDeltaDeceased = ""

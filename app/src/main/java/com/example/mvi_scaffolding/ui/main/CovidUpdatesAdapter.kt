@@ -8,23 +8,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvi_scaffolding.R
-import com.example.mvi_scaffolding.api.main.network_responses.NationalDataResponse
+import com.example.mvi_scaffolding.models.NationalDataTable
 
 class CovidUpdatesAdapter(val getUpdatedStringsCallback: (position: Int) -> Array<String>) :
-    ListAdapter<NationalDataResponse, CovidUpdatesAdapter.ViewHolder>(CovidUpdatesAdapter.DIFF_CALLBACK) {
+    ListAdapter<NationalDataTable, CovidUpdatesAdapter.ViewHolder>(CovidUpdatesAdapter.DIFF_CALLBACK) {
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NationalDataResponse>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NationalDataTable>() {
             override fun areItemsTheSame(
-                oldItem: NationalDataResponse,
-                newItem: NationalDataResponse
+                oldItem: NationalDataTable,
+                newItem: NationalDataTable
             ): Boolean {
                 return oldItem.state == newItem.state
             }
 
             override fun areContentsTheSame(
-                oldItem: NationalDataResponse,
-                newItem: NationalDataResponse
+                oldItem: NationalDataTable,
+                newItem: NationalDataTable
             ): Boolean {
                 return oldItem == newItem
             }
@@ -44,7 +44,7 @@ class CovidUpdatesAdapter(val getUpdatedStringsCallback: (position: Int) -> Arra
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(item: NationalDataResponse, updatedStrings: Array<String>) = with(itemView) {
+        fun bind(item: NationalDataTable, updatedStrings: Array<String>) = with(itemView) {
             itemView.findViewById<TextView>(R.id.state_name).text = item.state
             itemView.findViewById<TextView>(R.id.confirmed_total).text = item.confirmed
             itemView.findViewById<TextView>(R.id.recovered_total).text = item.recovered

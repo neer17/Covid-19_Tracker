@@ -1,23 +1,11 @@
 package com.example.mvi_scaffolding.api.main.network_responses
 
+import com.example.mvi_scaffolding.models.NationalDataTable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class NationalData(
+data class NationalData(
     @SerializedName("statewise")
     @Expose
-    val nationWideDataList: List<NationalDataResponse>
-)
-
-data class NationalDataResponse(
-    val active: String,
-    val confirmed: String,
-    val deaths: String,
-    val deltaconfirmed: String,
-    val deltadeaths: String,
-    val deltarecovered: String,
-    val lastupdatedtime: String,
-    val recovered: String,
-    val state: String,
-    val statecode: String
+    val nationWideDataList: List<NationalDataTable>
 )

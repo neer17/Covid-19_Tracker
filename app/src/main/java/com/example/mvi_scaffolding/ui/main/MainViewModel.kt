@@ -54,4 +54,10 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
         update.location = location
         _viewState.value = update
     }
+
+    fun setInternetConnectivity(internetConnectivity: Boolean) {
+        val update = getCurrentViewStateOrNew()
+        update.internetConnectivity = internetConnectivity
+        _viewState.value = update
+    }
 }

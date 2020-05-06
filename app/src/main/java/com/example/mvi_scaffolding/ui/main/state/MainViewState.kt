@@ -5,5 +5,6 @@ import com.example.mvi_scaffolding.api.main.network_responses.NationalData
 
 data class MainViewState(
     var nationalData: NationalData? = null,
-    var location: Location? = null
+    var location: Location? = null,
+    var internetConnectivity: Boolean? = null
 )

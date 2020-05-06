@@ -2,22 +2,82 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fbfd275fe7b2581e958bb92eb8752822",
+    "identityHash": "65a2ebbe9210fd6e1fa4d91b07389413",
     "entities": [
       {
-        "tableName": "main_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`account_pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "tableName": "national_data_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `active` TEXT NOT NULL, `confirmed` TEXT NOT NULL, `deaths` TEXT NOT NULL, `deltaconfirmed` TEXT NOT NULL, `deltadeaths` TEXT NOT NULL, `deltarecovered` TEXT NOT NULL, `lastupdatedtime` TEXT NOT NULL, `recovered` TEXT NOT NULL, `state` TEXT NOT NULL, `statecode` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "account_pk",
-            "columnName": "account_pk",
+            "columnName": "pk",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "active",
+            "columnName": "active",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confirmed",
+            "columnName": "confirmed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deaths",
+            "columnName": "deaths",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deltaconfirmed",
+            "columnName": "deltaconfirmed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deltadeaths",
+            "columnName": "deltadeaths",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deltarecovered",
+            "columnName": "deltarecovered",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastupdatedtime",
+            "columnName": "lastupdatedtime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recovered",
+            "columnName": "recovered",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statecode",
+            "columnName": "statecode",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "account_pk"
+            "pk"
           ],
           "autoGenerate": true
         },
@@ -28,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fbfd275fe7b2581e958bb92eb8752822')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '65a2ebbe9210fd6e1fa4d91b07389413')"
     ]
   }
 }

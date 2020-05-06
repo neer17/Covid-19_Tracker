@@ -1,6 +1,8 @@
 package com.example.mvi_scaffolding.di.main
 
 import com.example.mvi_scaffolding.api.main.OpenApiMainService
+import com.example.mvi_scaffolding.persistence.AppDatabase
+import com.example.mvi_scaffolding.persistence.MainDao
 import com.example.mvi_scaffolding.repository.main.MainRepository
 import com.example.mvi_scaffolding.session.SessionManager
 import dagger.Module
@@ -21,9 +23,10 @@ class MainModule {
     @Provides
     fun provideMainRepository(
         openApiMainService: OpenApiMainService,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        mainDao: MainDao
     ): MainRepository {
-        return MainRepository(openApiMainService, sessionManager)
+        return MainRepository(openApiMainService, sessionManager, mainDao)
     }
 
 //    @MainScope
@@ -32,10 +35,10 @@ class MainModule {
 //        return LocationServices.getFusedLocationProviderClient()
 //    }
 
-//    @MainScope
-//    @Provides
-//    fun provideBlogPostDao(db: AppDatabase): BlogPostDao {
-//        return db.getBlogPostDao()
-//    }
+    @MainScope
+    @Provides
+    fun provideMainDao(db: AppDatabase): MainDao {
+        return db.getMainDao()
+    }
 
 }
