@@ -9,5 +9,13 @@ class Constants {
         const val NETWORK_TIMEOUT = 3000L
         const val TESTING_NETWORK_DELAY = 0L // fake network delay for testing
         const val TESTING_CACHE_DELAY = 0L // fake cache delay for testing
+
+        //  home fragment
+        const val GOVERNMENT_HELPLINE = "Government Helpline"
+        const val COVID_19_TESTING_LAB = "CoVID-19 Testing Lab"
+        const val POLICE = "Police"
+        const val FIRE_BRIGADE = "Fire Brigade"
+        const val FREE_FOOD = "Free Food"
+        const val HOSPITALS_AND_CENTERS = "Hospitals and Centers"
     }
 }

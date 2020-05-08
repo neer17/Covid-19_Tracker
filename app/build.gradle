@@ -128,13 +128,12 @@ dependencies {
     //  dexter for permissions
     implementation "com.karumi:dexter:$dexter"
 
-    //  TedPermission
-    implementation "gun0912.ted:tedpermission:$ted_permission"
-
     //  google nearby
     implementation "com.google.android.gms:play-services-nearby:$google_nearby"
 
     //  google location api
     implementation "com.google.android.gms:play-services-location:$google_location"
 
+    //  gifs
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 }

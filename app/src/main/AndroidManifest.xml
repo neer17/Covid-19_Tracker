@@ -16,15 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <!-- GOOGLE NEARBY API-->
+        <!-- GOOGLE NEARBY API -->
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyBoRYNujQxNd8ZgOKVXmTUAiPU1dPFqrcw" />
-
-        <!-- ACTIVITIES-->
-        <activity android:name=".ui.auth.AuthActivity">
-        </activity>
+            android:value="AIzaSyBoRYNujQxNd8ZgOKVXmTUAiPU1dPFqrcw" /> <!-- ACTIVITIES -->
+        <activity android:name=".ui.auth.AuthActivity"></activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

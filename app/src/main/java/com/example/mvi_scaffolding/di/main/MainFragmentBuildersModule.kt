@@ -1,6 +1,7 @@
 package com.example.mvi_scaffolding.di.main
 
 import com.example.mvi_scaffolding.ui.main.CovidUpdatesFragment
+import com.example.mvi_scaffolding.ui.main.HomeFragment
 import com.example.mvi_scaffolding.ui.main.NationWideDataDisplayFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -13,4 +14,7 @@ abstract class MainFragmentBuildersModule {
 
     @ContributesAndroidInjector()
     abstract fun contributeNationWideDataDisplayFragment(): NationWideDataDisplayFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeHomeFragment(): HomeFragment
 }

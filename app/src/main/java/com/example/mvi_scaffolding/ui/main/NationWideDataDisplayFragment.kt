@@ -1,5 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ class NationWideDataDisplayFragment : BaseMainFragment() {
     lateinit var adapter: CovidUpdatesAdapter
     lateinit var recyclerView: RecyclerView
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,6 +27,7 @@ class NationWideDataDisplayFragment : BaseMainFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setHasOptionsMenu(true)
         setRecyclerView()
         subscribeObservers()
     }

@@ -2,11 +2,11 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_nav_graph"
-    app:startDestination="@id/covidUpdatesFragment">
+    android:id="@+id/nav_update"
+    app:startDestination="@id/updatesFragment">
 
     <fragment
-        android:id="@+id/covidUpdatesFragment"
+        android:id="@+id/updatesFragment"
         android:name="com.example.mvi_scaffolding.ui.main.CovidUpdatesFragment"
         android:label="COVID-19 Updates"
         tools:layout="@layout/fragment_covid_updates">
@@ -18,5 +18,9 @@
         android:id="@+id/nationWideDataDisplayFragment"
         android:name="com.example.mvi_scaffolding.ui.main.NationWideDataDisplayFragment"
         android:label="Recent Data"
-        tools:layout="@layout/fragment_nation_wide_data_display" />
+        tools:layout="@layout/fragment_nation_wide_data_display" >
+        <action
+            android:id="@+id/action_nationWideDataDisplayFragment_to_covidUpdatesFragment"
+            app:destination="@id/updatesFragment" />
+    </fragment>
 </navigation>

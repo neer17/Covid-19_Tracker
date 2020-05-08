@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "65a2ebbe9210fd6e1fa4d91b07389413",
+    "identityHash": "cce2511ef6e173929af2fc69486771ec",
     "entities": [
       {
         "tableName": "national_data_table",
@@ -83,12 +83,56 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "national_resource_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `category` TEXT, `city` TEXT, `phonenumber` TEXT, `state` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "city",
+            "columnName": "city",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phonenumber",
+            "columnName": "phonenumber",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "pk"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '65a2ebbe9210fd6e1fa4d91b07389413')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cce2511ef6e173929af2fc69486771ec')"
     ]
   }
 }

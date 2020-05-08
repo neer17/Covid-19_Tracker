@@ -4,12 +4,12 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
+import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
 import com.example.mvi_scaffolding.repository.main.MainRepository
 import com.example.mvi_scaffolding.ui.BaseViewModel
 import com.example.mvi_scaffolding.ui.DataState
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent
-import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalDataEvent
-import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.None
+import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.*
 import com.example.mvi_scaffolding.ui.main.state.MainViewState
 import com.example.mvi_scaffolding.utils.AbsentLiveData
 import javax.inject.Inject
@@ -21,6 +21,9 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
       when(stateEvent) {
           is GetNationalDataEvent -> {
              return mainRepository.getNationalData()
+          }
+          is GetNationalResourceEvent -> {
+              return mainRepository.getNationalResources()
           }
           is None -> {
               return AbsentLiveData.create()
@@ -46,6 +49,12 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
     fun setNationalData(nationalData: NationalData) {
         val update = getCurrentViewStateOrNew()
         update.nationalData = nationalData
+        _viewState.value = update
+    }
+
+    fun setNationalResource(nationalResource: NationalResource) {
+        val update = getCurrentViewStateOrNew()
+        update.nationalResource = nationalResource
         _viewState.value = update
     }
 

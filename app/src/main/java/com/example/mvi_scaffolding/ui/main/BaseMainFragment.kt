@@ -1,5 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +9,7 @@ import com.example.mvi_scaffolding.models.NationalDataTable
 import com.example.mvi_scaffolding.session.SessionManager
 import com.example.mvi_scaffolding.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
+import java.util.*
 import javax.inject.Inject
 
 abstract class BaseMainFragment : DaggerFragment() {
@@ -20,10 +22,14 @@ abstract class BaseMainFragment : DaggerFragment() {
     @Inject
     lateinit var sessionManager: SessionManager
 
+    lateinit var geocoder: Geocoder
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated: ")
-        
+
+        geocoder = Geocoder(activity, Locale.getDefault())
+
         viewModel = activity?.run {
             ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
         } ?: throw Exception("Invalid Activity")

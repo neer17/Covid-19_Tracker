@@ -4,5 +4,7 @@ sealed class MainStateEvent  {
 
     class GetNationalDataEvent: MainStateEvent()
 
+    class GetNationalResourceEvent: MainStateEvent()
+
     class None: MainStateEvent()
 }

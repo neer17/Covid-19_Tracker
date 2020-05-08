@@ -20,8 +20,6 @@ import java.util.*
 
 class CovidUpdatesFragment : BaseMainFragment() {
 
-    lateinit var geocoder: Geocoder
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,10 +30,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        geocoder = Geocoder(activity, Locale.getDefault())
-
-        getUsersLocation()
 
         subscribeObservers()
 
@@ -52,35 +46,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            dataState.data?.let {
-                it.data?.let {
-                    it.getContentIfNotHandled()?.let {
-                        it.nationalData?.let { nationalData ->
-//                            Log.d(TAG, "subscribeObservers: national data $nationalData")
-
-                            //  TODO: refactor, use datastatelistener in BaseActivity instead
-                            if (nationalData.nationWideDataList.isNotEmpty()) {
-                                viewModel.setNationalData(nationalData) //  updating view state
-                                viewModel.setInternetConnectivity(true)
-                            } else {
-                                val isAirplaneModeOn = Settings.System.getInt(
-                                    context!!.contentResolver,
-                                    Settings.Global.AIRPLANE_MODE_ON,
-                                    0
-                                ) != 0
-                                val isInternetOn = sessionManager.isConnectedToTheInternet()
-                                if (!isAirplaneModeOn || !isInternetOn) {
-                                    viewModel.setInternetConnectivity(false)
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-        })
-
         //  observe data -> location -> update UI
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             viewState?.let { mainViewState ->
@@ -103,21 +68,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
                 }
             }
         })
-    }
-
-    private fun getUsersLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(view!!.context)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                Log.d(TAG, "getUsersLocation: location $location")
-
-                location?.let {
-                    viewModel.setCurrentLocation(it)
-                }
-            }.addOnFailureListener { exception ->
-                Log.e(TAG, "getUsersLocation: error on getting location", exception)
-
-            }
     }
 
     //  update UI
