@@ -5,10 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvi_scaffolding.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_nation_wide_data_display.*
 
 
 class NationWideDataDisplayFragment : BaseMainFragment() {
@@ -41,6 +45,8 @@ class NationWideDataDisplayFragment : BaseMainFragment() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             viewState?.let { mainViewState ->
                 mainViewState.nationalData?.let { nationalData ->
+                    //  start shimmer
+                   view!!.findViewById<ShimmerFrameLayout>(R.id.shimmer_container_nationwide_frag).startShimmer()
 
                     //  getting strings with up/down arrows prepended
                     adapter = CovidUpdatesAdapter { position ->
@@ -50,6 +56,9 @@ class NationWideDataDisplayFragment : BaseMainFragment() {
 
                     recyclerView.adapter = adapter
                     adapter.submitList(nationalData.nationWideDataList)
+
+                    //  stop shimmer
+                    view!!.findViewById<ShimmerFrameLayout>(R.id.shimmer_container_nationwide_frag).stopShimmer()
                 }
             }
         })

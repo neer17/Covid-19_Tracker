@@ -1,190 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmer_container_frag_home_end"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="100dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    app:shimmer_clip_to_children="true"
+    app:shimmer_base_alpha="1"
+    app:shimmer_highlight_alpha=".1"
+    app:shimmer_auto_start="false"
     >
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Emergency service in your area"
-        android:textColor="@color/black"
-        android:textSize="12dp"
-        android:padding="1dp"
-        />
+        android:orientation="vertical"
+        android:paddingBottom="100dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Testing Labs Helpline"
-        android:padding="2dp"
-        android:layout_marginBottom="2dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Emergency service in your area"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:padding="1dp"
+            />
 
-    <TextView
-        android:id="@+id/testing_labs_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Testing Labs Helpline"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Government Helpline"
-        android:padding="2dp"
-        />
+        <TextView
+            android:id="@+id/testing_labs_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
-    <TextView
-        android:id="@+id/government_helpline_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Government Helpline"
+            android:padding="2dp"
+            />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hospitals and Centers"
-        android:padding="2dp"
-        android:layout_marginBottom="2dp"
-        />
+        <TextView
+            android:id="@+id/government_helpline_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
-    <TextView
-        android:id="@+id/hospitals_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hospitals and Centers"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Police"
-        android:padding="2dp"
-        android:layout_marginBottom="2dp"
-        />
+        <TextView
+            android:id="@+id/hospitals_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
-    <TextView
-        android:id="@+id/police_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Police"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            />
 
-    <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Fire Brigade"
-    android:padding="2dp"
-    android:layout_marginBottom="2dp"
-    />
+        <TextView
+            android:id="@+id/police_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
-    <TextView
-        android:id="@+id/fire_brigade_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fire Brigade"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Free Food"
-        android:padding="2dp"
-        android:layout_marginBottom="2dp"
-        />
+        <TextView
+            android:id="@+id/fire_brigade_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
-    <TextView
-        android:id="@+id/free_food_numbers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="3123124553213"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:singleLine="true"
-        android:background="@color/grey"
-        android:padding="10dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginBottom="10dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Free Food"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            />
+
+        <TextView
+            android:id="@+id/free_food_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="3123124553213"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:singleLine="true"
+            android:background="@color/grey"
+            android:padding="10dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="10dp"
+            />
 
 
-</LinearLayout>
+    </LinearLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

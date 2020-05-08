@@ -14,11 +14,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.models.NationalDataTable
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalDataEvent
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.location.LocationServices
+import kotlinx.android.synthetic.main.layout_covid_update_card.*
 import java.util.*
 
 
 class CovidUpdatesFragment : BaseMainFragment() {
+    lateinit var shimmerContainer: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +33,8 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        shimmerContainer = view.findViewById(R.id.shimmer_container_covid_card)
 
         subscribeObservers()
 
@@ -56,7 +61,9 @@ class CovidUpdatesFragment : BaseMainFragment() {
                         TAG,
                         "subscribeObservers: nation wide data ${nationalData.nationWideDataList}"
                     )
-                    //  observing location
+                    //  observing location, shimmer animation started
+                    shimmerContainer.startShimmer()
+
                     mainViewState.location?.let {
                         val state =
                             geocoder.getFromLocation(it.latitude, it.longitude, 1)[0].adminArea
@@ -112,6 +119,9 @@ class CovidUpdatesFragment : BaseMainFragment() {
         view!!.findViewById<TextView>(R.id.card_state_confirmed_delta).text = stateConfirmedDelta
         view!!.findViewById<TextView>(R.id.card_state_recovered_delta).text = stateRecoveredDelta
         view!!.findViewById<TextView>(R.id.card_state_deceased_delta).text = stateDeceasedDelta
+
+        //  stop shimmer
+       shimmerContainer.stopShimmer()
     }
 
     //  return NationalDataTable based on current state

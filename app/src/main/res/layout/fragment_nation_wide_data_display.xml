@@ -7,16 +7,26 @@
     tools:context=".ui.main.NationWideDataDisplayFragment">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/all_data_rv"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_container_nationwide_frag"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
+        app:shimmer_clip_to_children="true"
+        app:shimmer_base_alpha="1"
+        app:shimmer_highlight_alpha=".1"
+        app:shimmer_auto_start="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView21"
+        >
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/all_data_rv"
         tools:listitem="@layout/layout_covid_updates_view" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/textView21"

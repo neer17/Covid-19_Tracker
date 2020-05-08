@@ -18,10 +18,8 @@ import com.example.mvi_scaffolding.utils.Constants
 import kotlinx.android.synthetic.main.frag_home_layout_middle.*
 import kotlinx.android.synthetic.main.frag_home_layout_part_end.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -61,14 +59,17 @@ class HomeFragment : BaseMainFragment() {
                 viewState.location?.let {
                     val city = getCity(it)
                     GlobalScope.launch(Main) {
-                        getCityResources(city, nationalResource)
+                        //  set data and start shimmer
+                        shimmer_container_frag_home_end.startShimmer()
+                        setResourcesNumbers(city, nationalResource)
                     }
                 }
             }
         })
     }
 
-    private fun getCityResources(city: String, nationalResource: NationalResource) {
+    //  TODO: create a dedicated string for each textview and set all of them in the end
+    private fun setResourcesNumbers(city: String, nationalResource: NationalResource) {
         val cityBasedResources = nationalResource.nationalResource.filter { it.city == city }
         val testingLabsList =
             cityBasedResources.filter { it.category == Constants.COVID_19_TESTING_LAB }
@@ -134,6 +135,8 @@ class HomeFragment : BaseMainFragment() {
         hospitals_numbers.text = concatenatingString
         hospitals_numbers.isSelected = true
 
+        //  end shimmer
+        shimmer_container_frag_home_end.stopShimmer()
     }
 
     private fun getCity(location: Location): String {

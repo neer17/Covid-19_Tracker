@@ -5,9 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.MaterialComponents.Light"
-    app:cardElevation="8dp"
-    >
+    app:cardElevation="8dp">
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_container_covid_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:shimmer_clip_to_children="true"
+        app:shimmer_base_alpha="1"
+        app:shimmer_highlight_alpha=".1"
+        app:shimmer_auto_start="false"
+        >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -273,4 +281,5 @@
             app:layout_constraintTop_toTopOf="@+id/textView18"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </com.google.android.material.card.MaterialCardView>
