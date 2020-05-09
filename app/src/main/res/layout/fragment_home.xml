@@ -6,12 +6,15 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
+        android:id="@+id/assessment_btn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:elevation="2dp"
         android:text="Assessment Test"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_margin="5dp"
         android:theme="@style/Theme.MaterialComponents"
         app:strokeColor="@color/colorPrimary"

@@ -261,6 +261,9 @@ class MainActivity : DaggerAppCompatActivity(),
             is NationWideDataDisplayFragment -> {
                 navController.navigate(R.id.action_nationWideDataDisplayFragment_to_covidUpdatesFragment)
             }
+            is AssessmentFragment -> {
+                navController.navigate(R.id.action_assessmentFragment_to_homeFragment)
+            }
             else -> {
                 // do nothing
             }

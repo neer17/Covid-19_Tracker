@@ -1,6 +1,7 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,11 @@ import android.view.animation.RotateAnimation
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
 import com.example.mvi_scaffolding.utils.Constants
+import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.frag_home_layout_middle.*
 import kotlinx.android.synthetic.main.frag_home_layout_part_end.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
@@ -44,6 +47,11 @@ class HomeFragment : BaseMainFragment() {
         }
         arrow.setOnClickListener {
             setAnimationOnArrow()
+        }
+        view.findViewById<MaterialButton>(R.id.assessment_btn).setOnClickListener {
+            Log.d(TAG, "onViewCreated: assessment btn clicked")
+            
+            findNavController().navigate(R.id.action_homeFragment_to_assessmentFragment)
         }
 
         subscribeObservers()
