@@ -80,14 +80,14 @@ abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>
         }
 
         //  cancelling the job manually, if not completed in  3000ms
-        GlobalScope.launch(IO) {
+        /*GlobalScope.launch(IO) {
             delay(NETWORK_TIMEOUT)
 
             if (!job.isCompleted) {
                 Log.e(TAG, "NetworkBoundResource: JOB NETWORK TIMEOUT.")
                 job.cancel(CancellationException(ErrorHandling.UNABLE_TO_RESOLVE_HOST))
             }
-        }
+        }*/
     }
 
     private fun doCacheRequest() {

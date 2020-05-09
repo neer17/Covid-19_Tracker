@@ -17,6 +17,13 @@ buildscript {
         coroutines_version = '1.2.1'
         retrofit2_version = '2.6.0'
         nav_safe_args = '2.1.0-alpha05'
+        firebase_analytics = '17.2.2'
+        firebase_auth = '19.3.1'
+        dexter = '6.1.0'
+        ted_permission = '2.2.3'
+        google_nearby = '17.0.0'
+        google_play_services = '18.0.0'
+        google_location = '17.0.0'
     }
 
     repositories {
