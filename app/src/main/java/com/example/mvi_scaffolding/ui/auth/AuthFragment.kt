@@ -1,16 +1,13 @@
 package com.example.mvi_scaffolding.ui.auth
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
-
+import androidx.fragment.app.Fragment
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.ui.main.MainActivity
 import com.google.firebase.FirebaseException
@@ -18,7 +15,6 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import java.util.concurrent.TimeUnit
 
 
 class AuthFragment : Fragment() {
@@ -87,17 +83,16 @@ class AuthFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val verifyBtn = view.findViewById<Button>(R.id.auth_frag_verify_btn)
-        val phoneEt = view.findViewById<EditText>(R.id.auth_frag_mobile_number_et)
 
         verifyBtn.setOnClickListener {
-            val phoneNumber = phoneEt.text.toString()
+           /* val phoneNumber = phoneEt.text.toString()
 
             PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber, // Phone number to verify
                 60, // Timeout duration
                 TimeUnit.SECONDS, // Unit of timeout
                 activity!!.parent, // Activity (for callback binding)
-                callbacks) // OnVerificationStateChangedCallbacks
+                callbacks) // OnVerificationStateChangedCallbacks*/
         }
     }
 }
