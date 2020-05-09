@@ -1,10 +1,10 @@
 package com.example.mvi_scaffolding.ui.auth
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.mvi_scaffolding.R
+import dagger.android.support.DaggerAppCompatActivity
 
-class AuthActivity : AppCompatActivity() {
+class AuthActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

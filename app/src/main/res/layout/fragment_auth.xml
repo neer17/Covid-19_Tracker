@@ -51,30 +51,15 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Enter phone number"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:inputType="phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="26dp"
         android:layout_height="12dp"
         android:layout_marginEnd="4dp"
         android:src="@drawable/ic_indian_flag"
-        app:layout_constraintBottom_toBottomOf="@+id/editText"
-        app:layout_constraintEnd_toStartOf="@+id/editText"
-        app:layout_constraintTop_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toBottomOf="@+id/phone_number_et"
+        app:layout_constraintEnd_toStartOf="@+id/phone_number_et"
+        app:layout_constraintTop_toTopOf="@+id/phone_number_et"
         app:layout_constraintVertical_bias="0.545" />
 
     <ImageView
@@ -82,7 +67,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="2dp"
-        android:background="@color/white"
         android:src="@drawable/ic_message_black_24dp"
         app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
         app:layout_constraintEnd_toEndOf="@+id/materialCardView"
@@ -91,7 +75,7 @@
         app:layout_constraintVertical_bias="0.45" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/name_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
@@ -105,6 +89,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="266dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/auth_frag_verify_btn"
+        app:layout_constraintEnd_toEndOf="@+id/auth_frag_verify_btn"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="@+id/auth_frag_verify_btn"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number_et"
+        app:layout_constraintVertical_bias="0.0" />
+
     <Button
         android:id="@+id/auth_frag_verify_btn"
         android:layout_width="0dp"
@@ -112,11 +109,28 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="292dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/verify"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/phone_number_et" />
+
+    <EditText
+        android:id="@+id/phone_number_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:hint="Enter phone number"
+        android:maxLength="10"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/name_et"
+        app:layout_constraintTop_toBottomOf="@+id/name_et" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

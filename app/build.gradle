@@ -122,7 +122,7 @@ dependencies {
 
     //  firebase
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
-    implementation "com.google.firebase:firebase-auth:$firebase_auth"
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
     implementation "com.google.android.gms:play-services-auth:$google_play_services"
 
     //  dexter for permissions
