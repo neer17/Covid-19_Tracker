@@ -17,5 +17,10 @@ class Constants {
         const val FIRE_BRIGADE = "Fire Brigade"
         const val FREE_FOOD = "Free Food"
         const val HOSPITALS_AND_CENTERS = "Hospitals and Centers"
+
+        // Shared Preference Files:
+        const val APP_PREFERENCES: String = "com.com.example.mvi_scaffolding.APP_PREFERENCES"
+        const val LAST_NETWORK_REQUEST_TIME = "LAST_NETWORK_REQUEST_TIME"
+        const val LAST_KNOW_CITY_AND_STATE = "LAST_KNOW_CITY_AND_STATE"
     }
 }

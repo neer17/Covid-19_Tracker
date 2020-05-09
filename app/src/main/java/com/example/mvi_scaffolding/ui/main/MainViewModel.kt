@@ -1,6 +1,5 @@
 package com.example.mvi_scaffolding.ui.main
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
@@ -19,11 +18,26 @@ class MainViewModel
 constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, MainViewState>() {
     override fun handleStateEvent(stateEvent: MainStateEvent): LiveData<DataState<MainViewState>> {
       when(stateEvent) {
-          is GetNationalDataEvent -> {
-             return mainRepository.getNationalData()
+          is GetNationalDataNetworkEvent -> {
+              Log.d(TAG, "handleStateEvent: GetNationalDataNetworkEvent")
+              
+             return mainRepository.getNationalData(isNetworkRequest = true)
           }
-          is GetNationalResourceEvent -> {
-              return mainRepository.getNationalResources()
+          is GetNationalResourceNetworkEvent -> {
+              Log.d(TAG, "handleStateEvent: GetNationalResourceNetworkEvent")
+              
+              return mainRepository.getNationalResources(isNetworkRequest = true)
+          }
+          
+          is GetNationalDataCacheEvent -> {
+              Log.d(TAG, "handleStateEvent: GetNationalDataCacheEvent")
+              
+              return mainRepository.getNationalData(isNetworkRequest = false)
+          }
+          is GetNationalResourceCacheEvent -> {
+              Log.d(TAG, "handleStateEvent: GetNationalResourceCacheEvent")
+              
+              return mainRepository.getNationalResources(isNetworkRequest = false)
           }
           is None -> {
               return AbsentLiveData.create()
@@ -58,9 +72,9 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
         _viewState.value = update
     }
 
-    fun setCurrentLocation(location: Location) {
+    fun setCurrentLocation(cityAndState: Array<String>) {
         val update = getCurrentViewStateOrNew()
-        update.location = location
+        update.cityAndState = cityAndState
         _viewState.value = update
     }
 

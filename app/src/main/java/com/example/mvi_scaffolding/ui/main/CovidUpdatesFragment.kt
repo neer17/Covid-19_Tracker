@@ -1,10 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.models.NationalDataTable
-import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalDataEvent
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.gms.location.LocationServices
-import kotlinx.android.synthetic.main.layout_covid_update_card.*
-import java.util.*
 
 
 class CovidUpdatesFragment : BaseMainFragment() {
@@ -45,8 +37,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
     override fun onResume() {
         super.onResume()
-        //  making an event to trigger data request
-        viewModel.setStateEvent(GetNationalDataEvent())
     }
 
 
@@ -56,21 +46,16 @@ class CovidUpdatesFragment : BaseMainFragment() {
             viewState?.let { mainViewState ->
                 //  set data from api request
                 mainViewState.nationalData?.let { nationalData ->
-
-                    Log.d(
-                        TAG,
-                        "subscribeObservers: nation wide data ${nationalData.nationWideDataList}"
-                    )
+//
+//                    Log.d(
+//                        TAG,
+//                        "subscribeObservers: nation wide data ${nationalData.nationWideDataList}"
+//                    )
                     //  observing location, shimmer animation started
                     shimmerContainer.startShimmer()
 
-                    mainViewState.location?.let {
-                        val state =
-                            geocoder.getFromLocation(it.latitude, it.longitude, 1)[0].adminArea
-                        Log.d(TAG, "subscribeObservers: national data $nationalData")
-                        Log.d(TAG, "subscribeObservers: state: $state")
-
-                        updateCard(nationalData.nationWideDataList, state)
+                    mainViewState.cityAndState?.let {
+                        updateCard(nationalData.nationWideDataList, it[1])
                     } ?: updateCard(nationalData.nationWideDataList)
                 }
             }

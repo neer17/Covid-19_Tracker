@@ -1,6 +1,5 @@
 package com.example.mvi_scaffolding.ui.main
 
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
-import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.GetNationalResourceEvent
 import com.example.mvi_scaffolding.utils.Constants
 import kotlinx.android.synthetic.main.frag_home_layout_middle.*
 import kotlinx.android.synthetic.main.frag_home_layout_part_end.*
@@ -48,16 +46,14 @@ class HomeFragment : BaseMainFragment() {
             setAnimationOnArrow()
         }
 
-        //  TODO: make internet request in every 6 hrs or whn location changes
-        viewModel.setStateEvent(GetNationalResourceEvent())
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             viewState.nationalResource?.let { nationalResource ->
-                viewState.location?.let {
-                    val city = getCity(it)
+                viewState.cityAndState?.let {
+                    val city = it[0]
                     GlobalScope.launch(Main) {
                         //  set data and start shimmer
                         shimmer_container_frag_home_end.startShimmer()
@@ -138,11 +134,6 @@ class HomeFragment : BaseMainFragment() {
         //  end shimmer
         shimmer_container_frag_home_end.stopShimmer()
     }
-
-    private fun getCity(location: Location): String {
-        return geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].locality
-    }
-
 
     private fun setAnimationOnArrow() {
         val anim = RotateAnimation(

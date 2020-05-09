@@ -28,10 +28,10 @@ constructor(
 ) : JobManager("MainRepository") {
     private val TAG = "AppDebug: " + MainRepository::class.java.simpleName
 
-    fun getNationalData(): LiveData<DataState<MainViewState>> {
+    fun getNationalData(isNetworkRequest: Boolean): LiveData<DataState<MainViewState>> {
         return object : NetworkBoundResource<NationalData, Any, MainViewState>(
             sessionManager.isConnectedToTheInternet(),
-            isNetworkRequest = true,
+            isNetworkRequest = isNetworkRequest,
             shouldLoadFromCache = true,
             shouldCancelIfNoInternet = false
         ){
@@ -47,7 +47,7 @@ constructor(
                val results =  mainDao.insertAllData(
                     response.body.nationWideDataList
                 )
-                Log.d(TAG, "handleApiSuccessResponse: insertAll results $results")
+                Log.d(TAG, "handleApiSuccessResponse getNationalData: insertAll results $results")
                 createCacheRequestAndReturn()
             }
 
@@ -76,10 +76,10 @@ constructor(
         }.asLiveData()
     }
 
-    fun getNationalResources(): LiveData<DataState<MainViewState>> {
+    fun getNationalResources(isNetworkRequest: Boolean): LiveData<DataState<MainViewState>> {
         return object : NetworkBoundResource<NationalResource, Any, MainViewState>(
             sessionManager.isConnectedToTheInternet(),
-            isNetworkRequest = true,
+            isNetworkRequest = isNetworkRequest,
             shouldLoadFromCache = true,
             shouldCancelIfNoInternet = false
         ){

@@ -1,24 +1,26 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.session.SessionManager
+import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.*
 import com.example.mvi_scaffolding.utils.BottomNavController
+import com.example.mvi_scaffolding.utils.Constants
 import com.example.mvi_scaffolding.utils.setUpNavigation
 import com.example.mvi_scaffolding.viewmodels.ViewModelProviderFactory
 import com.google.android.gms.location.LocationServices
@@ -30,7 +32,11 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.support.DaggerAppCompatActivity
-
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 
@@ -47,9 +53,17 @@ class MainActivity : DaggerAppCompatActivity(),
     @Inject
     lateinit var sessionManager: SessionManager
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var editor: SharedPreferences.Editor
+
     lateinit var alterDialog: AlertDialog
 
     private lateinit var bottomNavigationView: BottomNavigationView
+
+    lateinit var geocoder: Geocoder
 
     private val bottomNavController by lazy(LazyThreadSafetyMode.NONE) {
         BottomNavController(
@@ -73,28 +87,91 @@ class MainActivity : DaggerAppCompatActivity(),
             bottomNavController.onNavigationItemSelected()
         }
 
+        //  initializations
+        geocoder = Geocoder(this, Locale.getDefault())
+
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
 
         //  TODO: get permisions might delete later on
+        getPermissions()
         buildAlertDialog()
         setupActionBar()
-        getPermissions()
-        getUsersLocation()
         subscribeObservers()
+    }
+
+    /*
+    *  get the current location and last updated time
+    **/
+    override fun onStart() {
+        super.onStart()
+
+        //  get last network req time,
+        //  if null save the current time and make network req,
+        //  if not make network req if time diff exceeds 6 hrs
+        getNationalDataAndResources()
+
+        //  get current location,
+        //  if location changed,
+        //  make network req -> update view state,
+        //  if location null, check shared prefs,
+        //  if not null update viewstate
+//        updateCityAndState()
+    }
+
+    //  make network req or read data from cache
+    private fun getNationalDataAndResources() {
+        val lastNetworkRequestTime =
+            sharedPreferences.getLong(Constants.LAST_NETWORK_REQUEST_TIME, 0)
+
+        if (lastNetworkRequestTime != 0L) {
+            val hoursElapsed =
+                System.currentTimeMillis().minus(lastNetworkRequestTime).div(1000 * 60 * 60)
+            if (hoursElapsed > 6) {
+                GlobalScope.launch(Main) {
+                    viewModel.setStateEvent(GetNationalResourceNetworkEvent())
+                    delay(3000)
+
+                    // SET STATE
+                    viewModel.setStateEvent(GetNationalDataNetworkEvent())
+                }
+            } else {
+                GlobalScope.launch(Main) {
+                    viewModel.setStateEvent(GetNationalResourceCacheEvent())
+                    delay(3000)
+
+                    viewModel.setStateEvent(GetNationalDataCacheEvent())
+                }
+            }
+
+        } else {
+            editor.putLong(Constants.LAST_NETWORK_REQUEST_TIME, System.currentTimeMillis())
+            editor.commit()
+
+            GlobalScope.launch(Main) {
+                viewModel.setStateEvent(GetNationalResourceNetworkEvent())
+                //  for the FIRST TIME, make network request
+                //  SET STATE
+                delay(3000)
+                viewModel.setStateEvent(GetNationalDataNetworkEvent())
+            }
+        }
     }
 
 
     private fun subscribeObservers() {
-        //  datastate would get the data and set the data in MainViewState
         viewModel.dataState.observe(this, Observer { dataState ->
             dataState.data?.let {
                 it.data?.let {
                     it.getContentIfNotHandled()?.let {
-                        // set  NationalData
+                        // UPDATE VIEWSTATE
                         it.nationalData?.let { nationalData ->
                             //  TODO: refactor, use datastatelistener in BaseActivity instead
                             if (nationalData.nationWideDataList.isNotEmpty()) {
+                                Log.d(TAG, "subscribeObservers: national data is not null")
+
                                 viewModel.setNationalData(nationalData) //  updating view state
+
+                                //  TODO: remove it
                                 viewModel.setInternetConnectivity(true)
                             } else {
                                 val isAirplaneModeOn = Settings.System.getInt(
@@ -109,7 +186,7 @@ class MainActivity : DaggerAppCompatActivity(),
                             }
                         }
 
-                        //  set NationalResource
+                        // UPDATE VIEW STATE
                         it.nationalResource?.let {
                             viewModel.setNationalResource(it)
                         }
@@ -120,7 +197,7 @@ class MainActivity : DaggerAppCompatActivity(),
 
         //  TODO: move this logic to datastatelistener
         viewModel.viewState.observe(this, Observer { mainViewState ->
-            Log.d(TAG, "subscribeObservers: viewState: $mainViewState")
+//            Log.d(TAG, "subscribeObservers: viewState : $mainViewState")
 
             mainViewState.internetConnectivity?.let {
                 if (!it) {
@@ -128,7 +205,33 @@ class MainActivity : DaggerAppCompatActivity(),
                 } else
                     alterDialog.dismiss()
             }
+
+//            mainViewState.cityAndState?.let {
+//                getNationalResources(it)
+//            }
         })
+    }
+
+    //  TODO: use coroutines
+    private fun getUsersLocation() {
+        val lm: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (!locationEnabled)
+        //  TODO: show alert dialog
+        else {
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+
+                    //  UPDATE VIEW STATE
+                    val (city, state) = getCityAndState(location!!)
+                    viewModel.setCurrentLocation(arrayOf(city, state))
+
+                }.addOnFailureListener { exception ->
+                    Log.e(TAG, "getUsersLocation: error on getting location", exception)
+                }
+        }
     }
 
     //  used in "onNavigationItemSelected"
@@ -184,22 +287,6 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
 
-    private fun getUsersLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                Log.d(TAG, "getUsersLocation: location $location")
-
-                //  setting location in MainViewState
-                location?.let {
-                    viewModel.setCurrentLocation(it)
-                }
-            }.addOnFailureListener { exception ->
-                Log.e(TAG, "getUsersLocation: error on getting location", exception)
-
-            }
-    }
-
     private fun buildAlertDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alterDialog = alertDialogBuilder.setMessage("Enable connections")
@@ -210,6 +297,7 @@ class MainActivity : DaggerAppCompatActivity(),
 
     }
 
+    //  TODO: Refactor to AuthActivity
     private fun getPermissions() {
         Dexter.withContext(this)
             .withPermissions(
@@ -218,7 +306,11 @@ class MainActivity : DaggerAppCompatActivity(),
             )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
-
+                    Log.d(
+                        TAG,
+                        "onPermissionsChecked allpermissionsgranted?: ${p0?.areAllPermissionsGranted()}"
+                    )
+                    getUsersLocation()
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -228,4 +320,11 @@ class MainActivity : DaggerAppCompatActivity(),
                 }
             }).check()
     }
+
+    private fun getCityAndState(location: Location): Array<String> {
+        val city = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].locality
+        val state = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].adminArea
+        return arrayOf(city, state)
+    }
+
 }
