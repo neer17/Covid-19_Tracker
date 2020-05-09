@@ -1,7 +1,8 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +16,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
 import com.example.mvi_scaffolding.utils.Constants
-import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.frag_home_layout_middle.*
 import kotlinx.android.synthetic.main.frag_home_layout_part_end.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -48,10 +49,14 @@ class HomeFragment : BaseMainFragment() {
         arrow.setOnClickListener {
             setAnimationOnArrow()
         }
-        view.findViewById<MaterialButton>(R.id.assessment_btn).setOnClickListener {
-            Log.d(TAG, "onViewCreated: assessment btn clicked")
-            
+        assessment_btn.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_assessmentFragment)
+        }
+        call_helpline_btn.setOnClickListener {
+            Intent(Intent.ACTION_DIAL).let {
+                it.data = Uri.parse("tel:1075")
+                startActivity(it)
+            }
         }
 
         subscribeObservers()
@@ -89,7 +94,7 @@ class HomeFragment : BaseMainFragment() {
         var concatenatingString = ""
         testingLabsList.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         testing_labs_numbers.text = concatenatingString
         testing_labs_numbers.isSelected = true
@@ -98,7 +103,7 @@ class HomeFragment : BaseMainFragment() {
         concatenatingString = ""
         governmentHelpline.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         government_helpline_numbers.text = concatenatingString
         government_helpline_numbers.isSelected = true
@@ -107,7 +112,7 @@ class HomeFragment : BaseMainFragment() {
         concatenatingString = ""
         freeFoodList.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         free_food_numbers.text = concatenatingString
         free_food_numbers.isSelected = true
@@ -116,7 +121,7 @@ class HomeFragment : BaseMainFragment() {
         concatenatingString = ""
         police.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         police_numbers.text = concatenatingString
         police_numbers.isSelected = true
@@ -125,7 +130,7 @@ class HomeFragment : BaseMainFragment() {
         concatenatingString = ""
         fireBrigadeList.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         fire_brigade_numbers.text = concatenatingString
         fire_brigade_numbers.isSelected = true
@@ -134,7 +139,7 @@ class HomeFragment : BaseMainFragment() {
         concatenatingString = ""
         hospitalsAndCenters.forEach {
             if (!it.phonenumber.isNullOrEmpty())
-                concatenatingString += it.phonenumber + " || "
+                concatenatingString += it.phonenumber + ", "
         }
         hospitals_numbers.text = concatenatingString
         hospitals_numbers.isSelected = true
