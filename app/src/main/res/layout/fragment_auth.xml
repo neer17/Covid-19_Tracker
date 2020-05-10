@@ -8,14 +8,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
-        style="@style/CardView.Light"
-        app:cardBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.CardView"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="16dp"
-        android:outlineAmbientShadowColor="@color/green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +22,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient">
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
@@ -42,6 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="ENTER PHONE NUMBER"
+                    android:textColor="@color/white"
                     android:textFontWeight="600"
                     android:textSize="18dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -57,9 +57,9 @@
         android:layout_height="12dp"
         android:layout_marginEnd="4dp"
         android:src="@drawable/ic_indian_flag"
-        app:layout_constraintBottom_toBottomOf="@+id/phone_number_et"
-        app:layout_constraintEnd_toStartOf="@+id/phone_number_et"
-        app:layout_constraintTop_toTopOf="@+id/phone_number_et"
+        app:layout_constraintBottom_toBottomOf="@+id/phone_text_input"
+        app:layout_constraintEnd_toStartOf="@+id/phone_text_input"
+        app:layout_constraintTop_toTopOf="@+id/phone_text_input"
         app:layout_constraintVertical_bias="0.545" />
 
     <ImageView
@@ -74,33 +74,41 @@
         app:layout_constraintTop_toBottomOf="@+id/materialCardView"
         app:layout_constraintVertical_bias="0.45" />
 
-    <EditText
-        android:id="@+id/name_et"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/username_text_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Enter name"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:inputType="textPersonName"
+        android:hint="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:startIconContentDescription=""
+        app:startIconDrawable="@drawable/ic_account_circle_black_24dp">
 
-    <Chronometer
-        android:id="@+id/chronometer"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/count_down_timer_tv"
+        android:layout_width="67dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="266dp"
-        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="00:00"
         app:layout_constraintBottom_toTopOf="@+id/auth_frag_verify_btn"
-        app:layout_constraintEnd_toEndOf="@+id/auth_frag_verify_btn"
-        app:layout_constraintHorizontal_bias="0.48"
-        app:layout_constraintStart_toStartOf="@+id/auth_frag_verify_btn"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number_et"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone_text_input"
+        app:layout_constraintVertical_bias="0.974"
+        tools:text="00:00" />
 
     <Button
         android:id="@+id/auth_frag_verify_btn"
@@ -115,22 +123,59 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number_et" />
+        app:layout_constraintTop_toBottomOf="@+id/phone_text_input"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <EditText
-        android:id="@+id/phone_number_et"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phone_text_input"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:hint="Enter phone number"
-        android:maxLength="10"
-        android:inputType="phone"
+        android:hint="Phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/name_et"
-        app:layout_constraintTop_toBottomOf="@+id/name_et" />
+        app:layout_constraintStart_toStartOf="@+id/username_text_layout"
+        app:layout_constraintTop_toBottomOf="@+id/username_text_layout"
+        app:startIconContentDescription="phone icon"
+        app:startIconDrawable="@drawable/ic_phone_black_24dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phone_number_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:maxLength="10" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    TODO: delete it later -->
+    <EditText
+        android:id="@+id/code_verify_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="136dp"
+        android:ems="10"
+        android:hint="enter code"
+        android:inputType="number"
+        android:maxLength="7"
+        app:layout_constraintBottom_toTopOf="@+id/count_down_timer_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--    TODO: delete it later -->
+    <Button
+        android:id="@+id/confirm_code_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Validate"
+        app:layout_constraintEnd_toEndOf="@+id/code_verify_et"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/code_verify_et"
+        app:layout_constraintTop_toBottomOf="@+id/code_verify_et" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

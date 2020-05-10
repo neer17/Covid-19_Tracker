@@ -23,5 +23,6 @@ class Constants {
         const val LAST_NETWORK_REQUEST_TIME = "LAST_NETWORK_REQUEST_TIME"
         const val LAST_KNOW_CITY_AND_STATE = "LAST_KNOW_CITY_AND_STATE"
         const val USERNAME = "USERNAME"
+        const val USER_LOGGED_IN = "USER_LOGGED_IN"
     }
 }
