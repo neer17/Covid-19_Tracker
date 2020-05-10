@@ -6,6 +6,7 @@ import androidx.lifecycle.switchMap
 import com.example.mvi_scaffolding.api.main.OpenApiMainService
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
+import com.example.mvi_scaffolding.api.main.network_responses.TimeSeries
 import com.example.mvi_scaffolding.persistence.MainDao
 import com.example.mvi_scaffolding.repository.JobManager
 import com.example.mvi_scaffolding.repository.NetworkBoundResource
@@ -34,17 +35,17 @@ constructor(
             isNetworkRequest = isNetworkRequest,
             shouldLoadFromCache = true,
             shouldCancelIfNoInternet = false
-        ){
+        ) {
             override suspend fun createCacheRequestAndReturn() {
                 withContext(Main) {
-                    result.addSource(loadFromCache()) {viewState ->
+                    result.addSource(loadFromCache()) { viewState ->
                         onCompleteJob(DataState.data(viewState, null))
                     }
                 }
             }
 
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<NationalData>) {
-               val results =  mainDao.insertAllData(
+                val results = mainDao.insertAllData(
                     response.body.nationWideDataList
                 )
                 Log.d(TAG, "handleApiSuccessResponse getNationalData: insertAll results $results")
@@ -62,10 +63,58 @@ constructor(
             override fun loadFromCache(): LiveData<MainViewState> {
                 return mainDao.getAllData()
                     .switchMap {
-                        object: LiveData<MainViewState>() {
+                        object : LiveData<MainViewState>() {
                             override fun onActive() {
                                 super.onActive()
                                 value = MainViewState(nationalData = NationalData(it))
+                            }
+                        }
+                    }
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+            }
+        }.asLiveData()
+    }
+
+    fun getTimeSeries(isNetworkRequest: Boolean): LiveData<DataState<MainViewState>> {
+        return object : NetworkBoundResource<TimeSeries, Any, MainViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            isNetworkRequest = isNetworkRequest,
+            shouldLoadFromCache = true,
+            shouldCancelIfNoInternet = false
+        ) {
+            override suspend fun createCacheRequestAndReturn() {
+                withContext(Main) {
+                    result.addSource(loadFromCache()) { viewState ->
+                        onCompleteJob(DataState.data(viewState, null))
+                    }
+                }
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<TimeSeries>) {
+                val results = mainDao.insertTimeSeries(
+                    response.body.timeSeriesDataList
+                )
+                Log.d(TAG, "handleApiSuccessResponse getTimeSeries: insertAll results $results")
+                createCacheRequestAndReturn()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<TimeSeries>> {
+                return openApiMainService.getTimeSeries()
+            }
+
+            override fun setJob(job: Job) {
+                addJob("getTimeSeries", job)
+            }
+
+            override fun loadFromCache(): LiveData<MainViewState> {
+                return mainDao.getTimeSeries()
+                    .switchMap {
+                        object : LiveData<MainViewState>() {
+                            override fun onActive() {
+                                super.onActive()
+                                value = MainViewState(timeSeries = TimeSeries(it))
                             }
                         }
                     }
@@ -82,17 +131,17 @@ constructor(
             isNetworkRequest = isNetworkRequest,
             shouldLoadFromCache = true,
             shouldCancelIfNoInternet = false
-        ){
+        ) {
             override suspend fun createCacheRequestAndReturn() {
                 withContext(Main) {
-                    result.addSource(loadFromCache()) {viewState ->
+                    result.addSource(loadFromCache()) { viewState ->
                         onCompleteJob(DataState.data(viewState, null))
                     }
                 }
             }
 
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<NationalResource>) {
-                val results =  mainDao.insertAllResources(
+                val results = mainDao.insertAllResources(
                     response.body.nationalResource
                 )
                 Log.d(TAG, "handleApiSuccessResponse: insertAll results $results")
@@ -110,7 +159,7 @@ constructor(
             override fun loadFromCache(): LiveData<MainViewState> {
                 return mainDao.getAllResources()
                     .switchMap {
-                        object: LiveData<MainViewState>() {
+                        object : LiveData<MainViewState>() {
                             override fun onActive() {
                                 super.onActive()
                                 value = MainViewState(nationalResource = NationalResource(it))

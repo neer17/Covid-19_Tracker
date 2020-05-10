@@ -1,18 +1,15 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import com.example.mvi_scaffolding.BaseApplication
-import com.example.mvi_scaffolding.BuildConfig
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
@@ -21,17 +18,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import com.example.mvi_scaffolding.BaseApplication
+import com.example.mvi_scaffolding.BuildConfig
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.nearby.Actions
 import com.example.mvi_scaffolding.nearby.NearbyIntentService
 import com.example.mvi_scaffolding.nearby.ServiceState
 import com.example.mvi_scaffolding.nearby.getServiceState
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-
 import com.example.mvi_scaffolding.session.SessionManager
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.*
 import com.example.mvi_scaffolding.utils.BottomNavController
@@ -41,6 +34,11 @@ import com.example.mvi_scaffolding.viewmodels.ViewModelProviderFactory
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -91,28 +89,28 @@ class MainActivity : DaggerAppCompatActivity(),
         setContentView(R.layout.activity_main)
         (applicationContext as BaseApplication).mCurrentActivity = this
 
-        Dexter.withContext(this)
-            .withPermissions(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ).withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
-
-                    BluetoothAdapter.getDefaultAdapter().let {
-                        if (!it.isEnabled) it.enable()
-                    }
-
-                    actionOnService(Actions.START)
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest?>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }).check()
+//        Dexter.withContext(this)
+//            .withPermissions(
+//                Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ).withListener(object : MultiplePermissionsListener {
+//                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+//                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
+//
+//                    BluetoothAdapter.getDefaultAdapter().let {
+//                        if (!it.isEnabled) it.enable()
+//                    }
+//
+//                    actionOnService(Actions.START)
+//                }
+//
+//                override fun onPermissionRationaleShouldBeShown(
+//                    permissions: List<PermissionRequest?>?,
+//                    token: PermissionToken?
+//                ) {
+//                    token?.continuePermissionRequest()
+//                }
+//            }).check()
 
         //  bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
@@ -131,6 +129,25 @@ class MainActivity : DaggerAppCompatActivity(),
         buildAlertDialog()
         setupActionBar()
         subscribeObservers()
+    }
+
+    /*
+    *  get the current location and last updated time
+    **/
+    override fun onStart() {
+        super.onStart()
+
+        //  get last network req time,
+        //  if null save the current time and make network req,
+        //  if not make network req if time diff exceeds 6 hrs
+        getNationalDataAndResources()
+
+        //  get current location,
+        //  if location changed,
+        //  make network req -> update view state,
+        //  if location null, check shared prefs,
+        //  if not null update viewstate
+//        updateCityAndState()
     }
 
     private fun showLinkToSettingsDialog() {
@@ -174,6 +191,8 @@ class MainActivity : DaggerAppCompatActivity(),
 
                     // SET STATE
                     viewModel.setStateEvent(GetNationalDataNetworkEvent())
+//                    delay(3000)
+                    viewModel.setStateEvent(GetTimeSeriesNetworkEvent())
                 }
             } else {
                 GlobalScope.launch(Main) {
@@ -181,6 +200,8 @@ class MainActivity : DaggerAppCompatActivity(),
                     delay(3000)
 
                     viewModel.setStateEvent(GetNationalDataCacheEvent())
+//                    delay(3000)
+                    viewModel.setStateEvent(GetTimeSeriesCacheEvent())
                 }
             }
 
@@ -194,6 +215,8 @@ class MainActivity : DaggerAppCompatActivity(),
                 //  SET STATE
                 delay(3000)
                 viewModel.setStateEvent(GetNationalDataNetworkEvent())
+//                delay(3000)
+                viewModel.setStateEvent(GetTimeSeriesNetworkEvent())
             }
         }
     }
@@ -225,6 +248,11 @@ class MainActivity : DaggerAppCompatActivity(),
                                     viewModel.setInternetConnectivity(false)
                                 }
                             }
+                        }
+
+                        // UPDATE VIEW STATE
+                        it.timeSeries?.let {
+                            viewModel.setTimeSeries(it)
                         }
 
                         // UPDATE VIEW STATE

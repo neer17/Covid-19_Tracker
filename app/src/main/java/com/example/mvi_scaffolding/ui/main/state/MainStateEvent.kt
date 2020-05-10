@@ -1,14 +1,18 @@
 package com.example.mvi_scaffolding.ui.main.state
 
-sealed class MainStateEvent  {
+sealed class MainStateEvent {
 
-    class GetNationalDataNetworkEvent: MainStateEvent()
+    class GetNationalDataNetworkEvent : MainStateEvent()
 
-    class GetNationalDataCacheEvent: MainStateEvent()
+    class GetNationalDataCacheEvent : MainStateEvent()
 
-    class GetNationalResourceNetworkEvent: MainStateEvent()
+    class GetTimeSeriesNetworkEvent : MainStateEvent()
 
-    class GetNationalResourceCacheEvent: MainStateEvent()
+    class GetTimeSeriesCacheEvent : MainStateEvent()
 
-    class None: MainStateEvent()
+    class GetNationalResourceNetworkEvent : MainStateEvent()
+
+    class GetNationalResourceCacheEvent : MainStateEvent()
+
+    class None : MainStateEvent()
 }

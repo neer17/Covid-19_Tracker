@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalData
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
+import com.example.mvi_scaffolding.api.main.network_responses.TimeSeries
 import com.example.mvi_scaffolding.repository.main.MainRepository
 import com.example.mvi_scaffolding.ui.BaseViewModel
 import com.example.mvi_scaffolding.ui.DataState
@@ -23,6 +24,11 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
               
              return mainRepository.getNationalData(isNetworkRequest = true)
           }
+          is GetTimeSeriesNetworkEvent -> {
+              Log.d(TAG, "handleStateEvent: GetTimeSeriesNetworkEvent")
+
+              return mainRepository.getNationalData(isNetworkRequest = true)
+          }
           is GetNationalResourceNetworkEvent -> {
               Log.d(TAG, "handleStateEvent: GetNationalResourceNetworkEvent")
               
@@ -33,6 +39,10 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
               Log.d(TAG, "handleStateEvent: GetNationalDataCacheEvent")
               
               return mainRepository.getNationalData(isNetworkRequest = false)
+          }
+          is GetTimeSeriesCacheEvent -> {
+              Log.d(TAG, "handleStateEvent: GetTimeSeriesCacheEvent")
+              return mainRepository.getTimeSeries(isNetworkRequest = false)
           }
           is GetNationalResourceCacheEvent -> {
               Log.d(TAG, "handleStateEvent: GetNationalResourceCacheEvent")
@@ -63,6 +73,12 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
     fun setNationalData(nationalData: NationalData) {
         val update = getCurrentViewStateOrNew()
         update.nationalData = nationalData
+        _viewState.value = update
+    }
+
+    fun setTimeSeries(timeSeries: TimeSeries) {
+        val update = getCurrentViewStateOrNew()
+        update.timeSeries = timeSeries
         _viewState.value = update
     }
 

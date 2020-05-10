@@ -18,14 +18,14 @@
         android:orientation="vertical">
 
 
-        <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/gifImageView"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/giphy"
-            android:padding="5dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/giphy" />
+<!--        <pl.droidsonroids.gif.GifImageView-->
+<!--            android:id="@+id/gifImageView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="150dp"-->
+<!--            android:background="@drawable/giphy"-->
+<!--            android:padding="5dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/giphy" />-->
 
         <View
             android:layout_width="match_parent"
