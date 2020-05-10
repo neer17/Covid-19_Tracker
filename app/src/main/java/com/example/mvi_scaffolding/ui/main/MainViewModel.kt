@@ -82,11 +82,6 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
         _viewState.value = update
     }
 
-    fun setInternetConnectivity(internetConnectivity: Boolean) {
-        val update = getCurrentViewStateOrNew()
-        update.internetConnectivity = internetConnectivity
-        _viewState.value = update
-    }
 
     fun setThreatLevel(threatLevel: String) {
         val update = getCurrentViewStateOrNew()

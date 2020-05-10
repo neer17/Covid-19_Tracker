@@ -32,5 +32,8 @@ class Constants {
         const val VULNERABLE = "Vulnerable"
         const val SYMPTOMS = "Symptoms"
         const val QUARANTINE_TRAVEL_HISTORY = "Quarantine Travel History"
+
+        //  main activity
+        const val LATEST_UPDATED_TIME = "LATEST_UPDATED_TIME"
     }
 }

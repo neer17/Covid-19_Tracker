@@ -9,7 +9,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.models.NationalDataTable
+import com.example.mvi_scaffolding.utils.Constants
 import com.facebook.shimmer.ShimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_covid_updates.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CovidUpdatesFragment : BaseMainFragment() {
@@ -33,10 +37,8 @@ class CovidUpdatesFragment : BaseMainFragment() {
         view.findViewById<TextView>(R.id.view_data_by_state_tv).setOnClickListener {
             findNavController().navigate(R.id.action_covidUpdatesFragment_to_nationWideDataDisplayFragment)
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
+        setLastUpdatedTime()
     }
 
 
@@ -46,12 +48,6 @@ class CovidUpdatesFragment : BaseMainFragment() {
             viewState?.let { mainViewState ->
                 //  set data from api request
                 mainViewState.nationalData?.let { nationalData ->
-//
-//                    Log.d(
-//                        TAG,
-//                        "subscribeObservers: nation wide data ${nationalData.nationWideDataList}"
-//                    )
-                    //  observing location, shimmer animation started
                     shimmerContainer.startShimmer()
 
                     mainViewState.cityAndState?.let {
@@ -120,6 +116,18 @@ class CovidUpdatesFragment : BaseMainFragment() {
         }
 
         return data[1]
+    }
+
+    private fun setLastUpdatedTime() {
+        val lastUpdatedTime = sharedPreferences.getLong(Constants.LATEST_UPDATED_TIME, 0L)
+        if (lastUpdatedTime != 0L) {
+            val simpleDateFormat = SimpleDateFormat("dd/MM hh:mm:ss", Locale.UK)
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = lastUpdatedTime
+            val formattedTime = simpleDateFormat.format(calendar.time)
+            val updatedText = last_time_updated_tv.text.toString() + " " + formattedTime
+            last_time_updated_tv.text = updatedText
+        }
     }
 
     override fun onDestroyView() {

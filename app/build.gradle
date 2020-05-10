@@ -107,9 +107,6 @@ dependencies {
     // material dialogs
     implementation "com.afollestad.material-dialogs:core:$matieral_dialogs_version"
 
-    // Leak Canary
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
-
     // Card View
     implementation "androidx.cardview:cardview:$cardview_version"
 

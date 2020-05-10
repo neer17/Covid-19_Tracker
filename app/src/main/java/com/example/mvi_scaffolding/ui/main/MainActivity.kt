@@ -89,29 +89,16 @@ class MainActivity : DaggerAppCompatActivity(),
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
 
-        //  TODO: get permisions might delete later on
         setupActionBar()
+
         subscribeObservers()
     }
 
-    /*
-    *  get the current location and last updated time
-    **/
     override fun onStart() {
         super.onStart()
+
         getPermissions()
-
-        //  get last network req time,
-        //  if null save the current time and make network req,
-        //  if not make network req if time diff exceeds 6 hrs
         getNationalDataAndResources()
-
-        //  get current location,
-        //  if location changed,
-        //  make network req -> update view state,
-        //  if location null, check shared prefs,
-        //  if not null update viewstate
-//        updateCityAndState()
     }
 
     //  make network req or read data from cache
@@ -130,6 +117,9 @@ class MainActivity : DaggerAppCompatActivity(),
                     delay(3000)
 
                     viewModel.setStateEvent(GetNationalDataNetworkEvent())
+
+                    editor.putLong(Constants.LATEST_UPDATED_TIME, System.currentTimeMillis())
+                    editor.commit()
                 }
             } else {
                 GlobalScope.launch(Main) {
@@ -157,21 +147,12 @@ class MainActivity : DaggerAppCompatActivity(),
                 delay(3000)
 
                 viewModel.setStateEvent(GetNationalDataNetworkEvent())
+
+                editor.putLong(Constants.LATEST_UPDATED_TIME, System.currentTimeMillis())
+                editor.commit()
             }
         }
     }
-
-    private fun checkInternetAndAirplaneMode(): Array<Boolean> {
-        val isAirplaneModeOn = Settings.System.getInt(
-            contentResolver,
-            Settings.Global.AIRPLANE_MODE_ON,
-            0
-        ) != 0
-        val isInternetOn = sessionManager.isConnectedToTheInternet()
-
-        return arrayOf(isAirplaneModeOn, isInternetOn)
-    }
-
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(this, Observer { dataState ->
@@ -180,24 +161,10 @@ class MainActivity : DaggerAppCompatActivity(),
                     it.getContentIfNotHandled()?.let {
                         // UPDATE VIEW STATE
                         it.nationalData?.let { nationalData ->
-                            //  TODO: refactor, use datastatelistener in BaseActivity instead
                             if (nationalData.nationWideDataList.isNotEmpty()) {
                                 Log.d(TAG, "subscribeObservers: national data is not null")
 
                                 viewModel.setNationalData(nationalData) //  updating view state
-
-                                //  TODO: remove it
-                                viewModel.setInternetConnectivity(true)
-                            } else {
-                                val isAirplaneModeOn = Settings.System.getInt(
-                                    contentResolver,
-                                    Settings.Global.AIRPLANE_MODE_ON,
-                                    0
-                                ) != 0
-                                val isInternetOn = sessionManager.isConnectedToTheInternet()
-                                if (!isAirplaneModeOn || !isInternetOn) {
-                                    viewModel.setInternetConnectivity(false)
-                                }
                             }
                         }
 
@@ -209,22 +176,6 @@ class MainActivity : DaggerAppCompatActivity(),
                 }
             }
         })
-
-        /*//  TODO: move this logic to datastatelistener
-        viewModel.viewState.observe(this, Observer { mainViewState ->
-//            Log.d(TAG, "subscribeObservers: viewState : $mainViewState")
-
-            mainViewState.internetConnectivity?.let {
-                if (!it) {
-                    alterDialog.show()
-                } else
-                    alterDialog.dismiss()
-            }
-
-//            mainViewState.cityAndState?.let {
-//                getNationalResources(it)
-//            }
-        })*/
     }
 
     private fun getUsersLocation() {

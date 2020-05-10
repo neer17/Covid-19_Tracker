@@ -10,7 +10,6 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
@@ -22,13 +21,9 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-/**
- * A simple [Fragment] subclass.
- */
 class HomeFragment : BaseMainFragment() {
     var fromDegrees: Float = 0f
     var toDegrees: Float = 90f
@@ -72,7 +67,7 @@ class HomeFragment : BaseMainFragment() {
                     GlobalScope.launch(Main) {
                         //  set data and start shimmer
                         shimmer_container_frag_home_end.startShimmer()
-                        delay(3000)
+                        setCityName(city)
                         setResourcesNumbers(city, nationalResource)
                     }
                 }
@@ -85,24 +80,32 @@ class HomeFragment : BaseMainFragment() {
                         home_frag_color_card_tv.text = "$username, You are safe"
                     }
                     Constants.SYMPTOMS -> {
-                        home_frag_color_card_tv.text = "$username, you may have symptoms, STAY INDOORS"
+                        home_frag_color_card_tv.text =
+                            "$username, you may have symptoms, STAY INDOORS"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.yellow))
                     }
                     Constants.QUARANTINE_TRAVEL_HISTORY -> {
-                        home_frag_color_card_tv.text = "$username, You have a travel history, stay in QUARANTINE for 14 days"
+                        home_frag_color_card_tv.text =
+                            "$username, You have a travel history, stay in QUARANTINE for 14 days"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.yellow))
                     }
                     Constants.DANGER -> {
-                        home_frag_color_card_tv.text = "$username, You might have been contracted with COVID-19, GET HELP NOW"
+                        home_frag_color_card_tv.text =
+                            "$username, You might have been contracted with COVID-19, GET HELP NOW"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
                     }
                     Constants.VULNERABLE -> {
-                        home_frag_color_card_tv.text = "$username, You are most vulnerable to COVID-19, STAY INDOORS"
+                        home_frag_color_card_tv.text =
+                            "$username, You are most vulnerable to COVID-19, STAY INDOORS"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
                     }
                 }
             }
         })
+    }
+
+    private fun setCityName(city: String) {
+        city_name.text = city
     }
 
     //  TODO: create a dedicated string for each textview and set all of them in the end
