@@ -1,6 +1,7 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -89,28 +90,28 @@ class MainActivity : DaggerAppCompatActivity(),
         setContentView(R.layout.activity_main)
         (applicationContext as BaseApplication).mCurrentActivity = this
 
-//        Dexter.withContext(this)
-//            .withPermissions(
-//                Manifest.permission.ACCESS_FINE_LOCATION,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ).withListener(object : MultiplePermissionsListener {
-//                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-//                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
-//
-//                    BluetoothAdapter.getDefaultAdapter().let {
-//                        if (!it.isEnabled) it.enable()
-//                    }
-//
-//                    actionOnService(Actions.START)
-//                }
-//
-//                override fun onPermissionRationaleShouldBeShown(
-//                    permissions: List<PermissionRequest?>?,
-//                    token: PermissionToken?
-//                ) {
-//                    token?.continuePermissionRequest()
-//                }
-//            }).check()
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
+
+                    BluetoothAdapter.getDefaultAdapter().let {
+                        if (!it.isEnabled) it.enable()
+                    }
+
+                    actionOnService(Actions.START)
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest?>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }).check()
 
         //  bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottomNavigationView)

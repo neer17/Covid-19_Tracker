@@ -14,22 +14,19 @@
             android:id="@+id/covid_graph_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/red">
+            android:background="#ff073a">
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/ti_confirmed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Confirmed" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/ti_recovered"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recovered" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/ti_deaths"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Deceased" />
@@ -40,11 +37,11 @@
             android:id="@+id/covid_graph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>
