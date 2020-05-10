@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -71,6 +72,7 @@ class HomeFragment : BaseMainFragment() {
                     GlobalScope.launch(Main) {
                         //  set data and start shimmer
                         shimmer_container_frag_home_end.startShimmer()
+                        delay(3000)
                         setResourcesNumbers(city, nationalResource)
                     }
                 }

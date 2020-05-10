@@ -1,12 +1,10 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -30,6 +28,7 @@ import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
@@ -58,8 +57,6 @@ class MainActivity : DaggerAppCompatActivity(),
 
     @Inject
     lateinit var editor: SharedPreferences.Editor
-
-    lateinit var alterDialog: AlertDialog
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -93,8 +90,6 @@ class MainActivity : DaggerAppCompatActivity(),
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
 
         //  TODO: get permisions might delete later on
-        getPermissions()
-        buildAlertDialog()
         setupActionBar()
         subscribeObservers()
     }
@@ -104,6 +99,7 @@ class MainActivity : DaggerAppCompatActivity(),
     **/
     override fun onStart() {
         super.onStart()
+        getPermissions()
 
         //  get last network req time,
         //  if null save the current time and make network req,
@@ -128,10 +124,11 @@ class MainActivity : DaggerAppCompatActivity(),
                 System.currentTimeMillis().minus(lastNetworkRequestTime).div(1000 * 60 * 60)
             if (hoursElapsed > 6) {
                 GlobalScope.launch(Main) {
+                    // SET STATE
                     viewModel.setStateEvent(GetNationalResourceNetworkEvent())
+
                     delay(3000)
 
-                    // SET STATE
                     viewModel.setStateEvent(GetNationalDataNetworkEvent())
                 }
             } else {
@@ -143,18 +140,36 @@ class MainActivity : DaggerAppCompatActivity(),
                 }
             }
 
+            //  when app runs for the first time
         } else {
+            /*//  Internet has to be active for the first time
+            val connectivityResult = checkInternetAndAirplaneMode()
+            if (!connectivityResult[0] || !connectivityResult[1])
+                showConnectionAlertDialog(connectivityResult[0], connectivityResult[1])*/
+
             editor.putLong(Constants.LAST_NETWORK_REQUEST_TIME, System.currentTimeMillis())
             editor.commit()
 
             GlobalScope.launch(Main) {
-                viewModel.setStateEvent(GetNationalResourceNetworkEvent())
-                //  for the FIRST TIME, make network request
                 //  SET STATE
+                viewModel.setStateEvent(GetNationalResourceNetworkEvent())
+
                 delay(3000)
+
                 viewModel.setStateEvent(GetNationalDataNetworkEvent())
             }
         }
+    }
+
+    private fun checkInternetAndAirplaneMode(): Array<Boolean> {
+        val isAirplaneModeOn = Settings.System.getInt(
+            contentResolver,
+            Settings.Global.AIRPLANE_MODE_ON,
+            0
+        ) != 0
+        val isInternetOn = sessionManager.isConnectedToTheInternet()
+
+        return arrayOf(isAirplaneModeOn, isInternetOn)
     }
 
 
@@ -163,7 +178,7 @@ class MainActivity : DaggerAppCompatActivity(),
             dataState.data?.let {
                 it.data?.let {
                     it.getContentIfNotHandled()?.let {
-                        // UPDATE VIEWSTATE
+                        // UPDATE VIEW STATE
                         it.nationalData?.let { nationalData ->
                             //  TODO: refactor, use datastatelistener in BaseActivity instead
                             if (nationalData.nationWideDataList.isNotEmpty()) {
@@ -195,7 +210,7 @@ class MainActivity : DaggerAppCompatActivity(),
             }
         })
 
-        //  TODO: move this logic to datastatelistener
+        /*//  TODO: move this logic to datastatelistener
         viewModel.viewState.observe(this, Observer { mainViewState ->
 //            Log.d(TAG, "subscribeObservers: viewState : $mainViewState")
 
@@ -209,29 +224,20 @@ class MainActivity : DaggerAppCompatActivity(),
 //            mainViewState.cityAndState?.let {
 //                getNationalResources(it)
 //            }
-        })
+        })*/
     }
 
-    //  TODO: use coroutines
     private fun getUsersLocation() {
-        val lm: LocationManager =
-            getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val locationEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (!locationEnabled)
-        //  TODO: show alert dialog
-        else {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                //  UPDATE VIEW STATE
+                val (city, state) = getCityAndState(location!!)
+                viewModel.setCurrentLocation(arrayOf(city, state))
 
-                    //  UPDATE VIEW STATE
-                    val (city, state) = getCityAndState(location!!)
-                    viewModel.setCurrentLocation(arrayOf(city, state))
-
-                }.addOnFailureListener { exception ->
-                    Log.e(TAG, "getUsersLocation: error on getting location", exception)
-                }
-        }
+            }.addOnFailureListener { exception ->
+                Log.e(TAG, "getUsersLocation: error on getting location", exception)
+            }
     }
 
     //  used in "onNavigationItemSelected"
@@ -289,39 +295,53 @@ class MainActivity : DaggerAppCompatActivity(),
         findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true)
     }
 
-
-    private fun buildAlertDialog() {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alterDialog = alertDialogBuilder.setMessage("Enable connections")
-            .setPositiveButton("Settings") { p0, p1 ->
-                val settingsIntent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-                startActivityForResult(settingsIntent, 9003)
-            }.setCancelable(false).create()
-
+    private fun navigateToSettingAlertDialog() {
+        AlertDialog.Builder(this)
+            .setMessage("Go to Settings and give the location permission")
+            .setPositiveButton("Go to Settings") { p0, p1 ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivityForResult(intent, 100)
+            }.setCancelable(false)
+            .create()
+            .show()
     }
 
-    //  TODO: Refactor to AuthActivity
     private fun getPermissions() {
+        val multiplePermissionsListener = object : MultiplePermissionsListener {
+            override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+                p0?.let {
+                    Log.d(
+                        TAG,
+                        "onPermissionsChecked: all permissions ${it.areAllPermissionsGranted()}"
+                    )
+
+                    if (it.areAllPermissionsGranted()) {
+                        getUsersLocation()
+                    }
+                    if (!it.areAllPermissionsGranted())
+                        navigateToSettingAlertDialog()
+                }
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                p0: MutableList<PermissionRequest>?,
+                p1: PermissionToken?
+            ) {
+                p1?.continuePermissionRequest()
+            }
+        }
+
+        val errorListener =
+            PermissionRequestErrorListener { p0 -> Log.e(TAG, "onError: $p0") }
+
         Dexter.withContext(this)
             .withPermissions(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
-                    Log.d(
-                        TAG,
-                        "onPermissionsChecked allpermissionsgranted?: ${p0?.areAllPermissionsGranted()}"
-                    )
-                    getUsersLocation()
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    p0: MutableList<PermissionRequest>?,
-                    p1: PermissionToken?
-                ) {
-                }
-            }).check()
+            .withListener(multiplePermissionsListener)
+            .withErrorListener(errorListener)
+            .check()
     }
 
     private fun getCityAndState(location: Location): Array<String> {

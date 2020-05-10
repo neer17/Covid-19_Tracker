@@ -57,6 +57,7 @@ class AuthFragment : DaggerFragment() {
                 } else if (e is FirebaseNetworkException) {
                     Toast.makeText(activity, "Turn on the internet connection and try again", Toast.LENGTH_SHORT)
                         .show()
+                    return
                 }
 
                 Toast.makeText(activity, "Verification failed, try again", Toast.LENGTH_SHORT)
