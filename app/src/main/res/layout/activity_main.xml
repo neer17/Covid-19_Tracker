@@ -44,9 +44,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="#fff"
-        app:itemTextColor="@color/colorPrimary"
-        app:itemIconTint="@color/colorPrimary"
+        app:itemTextColor="@color/bottom_navigation_text_color_state"
+        app:itemIconTint="@color/bottom_navigation_item_color_state"
         app:menu="@menu/main_bottom_navigation_menu"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

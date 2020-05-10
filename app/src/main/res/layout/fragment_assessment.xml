@@ -38,6 +38,7 @@
                 android:id="@+id/chip_group_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:singleSelection="false"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
 
@@ -99,6 +100,7 @@
                 android:id="@+id/chip_group_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:singleSelection="false"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
 
@@ -213,12 +215,12 @@
                 android:text="Does any of these app to you" />
 
             <RadioGroup
+                android:id="@+id/radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="100dp"
                 android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                >
+                android:paddingEnd="10dp">
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rb_1"
