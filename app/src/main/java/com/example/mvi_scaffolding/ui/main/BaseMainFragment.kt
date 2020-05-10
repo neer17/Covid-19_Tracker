@@ -1,5 +1,6 @@
 package com.example.mvi_scaffolding.ui.main
 
+import android.content.SharedPreferences
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,11 @@ abstract class BaseMainFragment : DaggerFragment() {
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var editor: SharedPreferences.Editor
 
     lateinit var geocoder: Geocoder
 

@@ -39,6 +39,11 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
               
               return mainRepository.getNationalResources(isNetworkRequest = false)
           }
+          is WarnUsersOfContraction -> {
+              //    TODO: trigger push notifications
+              return AbsentLiveData.create()
+          }
+
           is None -> {
               return AbsentLiveData.create()
           }
@@ -52,7 +57,6 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "onCleared: ")
-        
         cancelActiveJobs()
     }
 
@@ -83,4 +87,11 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
         update.internetConnectivity = internetConnectivity
         _viewState.value = update
     }
+
+    fun setThreatLevel(threatLevel: String) {
+        val update = getCurrentViewStateOrNew()
+        update.threatLevel = threatLevel
+        _viewState.value = update
+    }
+
 }

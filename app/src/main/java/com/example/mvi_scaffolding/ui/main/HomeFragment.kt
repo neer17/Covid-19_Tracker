@@ -64,6 +64,7 @@ class HomeFragment : BaseMainFragment() {
 
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
+
             viewState.nationalResource?.let { nationalResource ->
                 viewState.cityAndState?.let {
                     val city = it[0]
@@ -71,6 +72,31 @@ class HomeFragment : BaseMainFragment() {
                         //  set data and start shimmer
                         shimmer_container_frag_home_end.startShimmer()
                         setResourcesNumbers(city, nationalResource)
+                    }
+                }
+            }
+
+            viewState.threatLevel?.let {
+                val username = sharedPreferences.getString(Constants.USERNAME, null)
+                when (it) {
+                    Constants.SAFE -> {
+                        home_frag_color_card_tv.text = "$username, You are safe"
+                    }
+                    Constants.SYMPTOMS -> {
+                        home_frag_color_card_tv.text = "$username, you may have symptoms, STAY INDOORS"
+                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.yellow))
+                    }
+                    Constants.QUARANTINE_TRAVEL_HISTORY -> {
+                        home_frag_color_card_tv.text = "$username, You have a travel history, stay in QUARANTINE for 14 days"
+                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.yellow))
+                    }
+                    Constants.DANGER -> {
+                        home_frag_color_card_tv.text = "$username, You might have been contracted with COVID-19, GET HELP NOW"
+                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
+                    }
+                    Constants.VULNERABLE -> {
+                        home_frag_color_card_tv.text = "$username, You are most vulnerable to COVID-19, STAY INDOORS"
+                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
                     }
                 }
             }

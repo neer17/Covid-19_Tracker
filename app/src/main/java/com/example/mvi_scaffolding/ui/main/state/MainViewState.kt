@@ -7,5 +7,6 @@ data class MainViewState(
     var nationalData: NationalData? = null,
     var nationalResource: NationalResource? = null,
     var cityAndState: Array<String>? = null,
-    var internetConnectivity: Boolean? = null
+    var internetConnectivity: Boolean? = null,
+    var threatLevel: String? = null
 )

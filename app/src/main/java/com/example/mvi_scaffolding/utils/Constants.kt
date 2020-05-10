@@ -24,5 +24,13 @@ class Constants {
         const val LAST_KNOW_CITY_AND_STATE = "LAST_KNOW_CITY_AND_STATE"
         const val USERNAME = "USERNAME"
         const val USER_LOGGED_IN = "USER_LOGGED_IN"
+
+        //  Assessment fragment
+        const val SAFE = "Safe"
+        const val INDOOR = "Quarantine"
+        const val DANGER = "Danger"
+        const val VULNERABLE = "Vulnerable"
+        const val SYMPTOMS = "Symptoms"
+        const val QUARANTINE_TRAVEL_HISTORY = "Quarantine Travel History"
     }
 }

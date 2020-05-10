@@ -10,5 +10,7 @@ sealed class MainStateEvent  {
 
     class GetNationalResourceCacheEvent: MainStateEvent()
 
+    class WarnUsersOfContraction: MainStateEvent()
+
     class None: MainStateEvent()
 }
