@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cce2511ef6e173929af2fc69486771ec",
+    "identityHash": "04e7550af14c1b0b5fce0a8a8ddcc46d",
     "entities": [
       {
         "tableName": "national_data_table",
@@ -85,6 +85,68 @@
         "foreignKeys": []
       },
       {
+        "tableName": "time_series_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dailyconfirmed` TEXT NOT NULL, `dailydeceased` TEXT NOT NULL, `dailyrecovered` TEXT NOT NULL, `date` TEXT NOT NULL, `totalconfirmed` TEXT NOT NULL, `totaldeceased` TEXT NOT NULL, `totalrecovered` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "account_pk",
+            "columnName": "pk",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dailyconfirmed",
+            "columnName": "dailyconfirmed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dailydeceased",
+            "columnName": "dailydeceased",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dailyrecovered",
+            "columnName": "dailyrecovered",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalconfirmed",
+            "columnName": "totalconfirmed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totaldeceased",
+            "columnName": "totaldeceased",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalrecovered",
+            "columnName": "totalrecovered",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "pk"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
         "tableName": "national_resource_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pk` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `category` TEXT, `city` TEXT, `phonenumber` TEXT, `state` TEXT)",
         "fields": [
@@ -132,7 +194,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cce2511ef6e173929af2fc69486771ec')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '04e7550af14c1b0b5fce0a8a8ddcc46d')"
     ]
   }
 }

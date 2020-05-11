@@ -1,10 +1,12 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -14,7 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import com.example.mvi_scaffolding.BaseApplication
+import com.example.mvi_scaffolding.BuildConfig
 import com.example.mvi_scaffolding.R
+import com.example.mvi_scaffolding.nearby.Actions
+import com.example.mvi_scaffolding.nearby.NearbyIntentService
+import com.example.mvi_scaffolding.nearby.ServiceState
+import com.example.mvi_scaffolding.nearby.getServiceState
 import com.example.mvi_scaffolding.session.SessionManager
 import com.example.mvi_scaffolding.ui.main.state.MainStateEvent.*
 import com.example.mvi_scaffolding.utils.BottomNavController
@@ -76,6 +84,30 @@ class MainActivity : DaggerAppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        (applicationContext as BaseApplication).mCurrentActivity = this
+
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
+
+                    BluetoothAdapter.getDefaultAdapter().let {
+                        if (!it.isEnabled) it.enable()
+                    }
+
+                    actionOnService(Actions.START)
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest?>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }).check()
 
         //  bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
@@ -99,6 +131,32 @@ class MainActivity : DaggerAppCompatActivity(),
 
         getPermissions()
         getNationalDataAndResources()
+    }
+
+    private fun showLinkToSettingsDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Alert !")
+            .setMessage("Location Permission is required")
+            .setCancelable(false)
+            .setPositiveButton(
+                "Settings"
+            ) { _, _ -> // When the user click yes button
+                // open settings
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                val uri: Uri = Uri.fromParts(
+                    "package",
+                    BuildConfig.APPLICATION_ID, null
+                )
+                intent.data = uri
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                finish()
+            }
+            .create()
+            .show()
     }
 
     //  make network req or read data from cache
@@ -127,6 +185,8 @@ class MainActivity : DaggerAppCompatActivity(),
                     delay(3000)
 
                     viewModel.setStateEvent(GetNationalDataCacheEvent())
+//                    delay(3000)
+                    viewModel.setStateEvent(GetTimeSeriesCacheEvent())
                 }
             }
 
@@ -154,6 +214,7 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
+
     private fun subscribeObservers() {
         viewModel.dataState.observe(this, Observer { dataState ->
             dataState.data?.let {
@@ -166,6 +227,11 @@ class MainActivity : DaggerAppCompatActivity(),
 
                                 viewModel.setNationalData(nationalData) //  updating view state
                             }
+                        }
+
+                        // UPDATE VIEW STATE
+                        it.timeSeries?.let {
+                            viewModel.setTimeSeries(it)
                         }
 
                         // UPDATE VIEW STATE
@@ -301,4 +367,15 @@ class MainActivity : DaggerAppCompatActivity(),
         return arrayOf(city, state)
     }
 
+    private fun actionOnService(action: Actions) {
+        if (getServiceState(this) == ServiceState.STOPPED && action == Actions.STOP) return
+        Intent(this, NearbyIntentService::class.java).also {
+            it.action = action.name
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(it)
+                return
+            }
+            startService(it)
+        }
+    }
 }

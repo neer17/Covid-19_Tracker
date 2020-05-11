@@ -6,7 +6,11 @@ sealed class MainStateEvent  {
 
     class GetNationalDataCacheEvent: MainStateEvent()
 
-    class GetNationalResourceNetworkEvent: MainStateEvent()
+    class GetTimeSeriesNetworkEvent : MainStateEvent()
+
+    class GetTimeSeriesCacheEvent : MainStateEvent()
+
+    class GetNationalResourceNetworkEvent : MainStateEvent()
 
     class GetNationalResourceCacheEvent: MainStateEvent()
 
