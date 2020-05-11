@@ -1,12 +1,12 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.Manifest
-import android.content.Context
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -17,7 +17,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import com.example.mvi_scaffolding.BaseApplication
-import com.example.mvi_scaffolding.BuildConfig
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.nearby.Actions
 import com.example.mvi_scaffolding.nearby.NearbyIntentService
@@ -86,28 +85,6 @@ class MainActivity : DaggerAppCompatActivity(),
         setContentView(R.layout.activity_main)
         (applicationContext as BaseApplication).mCurrentActivity = this
 
-        Dexter.withContext(this)
-            .withPermissions(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ).withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (!report.areAllPermissionsGranted()) return showLinkToSettingsDialog()
-
-                    BluetoothAdapter.getDefaultAdapter().let {
-                        if (!it.isEnabled) it.enable()
-                    }
-
-                    actionOnService(Actions.START)
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest?>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }).check()
 
         //  bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
@@ -133,32 +110,6 @@ class MainActivity : DaggerAppCompatActivity(),
         getNationalDataAndResources()
     }
 
-    private fun showLinkToSettingsDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Alert !")
-            .setMessage("Location Permission is required")
-            .setCancelable(false)
-            .setPositiveButton(
-                "Settings"
-            ) { _, _ -> // When the user click yes button
-                // open settings
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                val uri: Uri = Uri.fromParts(
-                    "package",
-                    BuildConfig.APPLICATION_ID, null
-                )
-                intent.data = uri
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            }
-            .setNegativeButton("Cancel") { _, _ ->
-                finish()
-            }
-            .create()
-            .show()
-    }
-
     //  make network req or read data from cache
     private fun getNationalDataAndResources() {
         val lastNetworkRequestTime =
@@ -173,8 +124,10 @@ class MainActivity : DaggerAppCompatActivity(),
                     viewModel.setStateEvent(GetNationalResourceNetworkEvent())
 
                     delay(3000)
-
                     viewModel.setStateEvent(GetNationalDataNetworkEvent())
+
+                    delay(3000)
+                    viewModel.setStateEvent(GetTimeSeriesNetworkEvent())
 
                     editor.putLong(Constants.LATEST_UPDATED_TIME, System.currentTimeMillis())
                     editor.commit()
@@ -182,21 +135,17 @@ class MainActivity : DaggerAppCompatActivity(),
             } else {
                 GlobalScope.launch(Main) {
                     viewModel.setStateEvent(GetNationalResourceCacheEvent())
-                    delay(3000)
 
+                    delay(3000)
                     viewModel.setStateEvent(GetNationalDataCacheEvent())
-//                    delay(3000)
+
+                    delay(3000)
                     viewModel.setStateEvent(GetTimeSeriesCacheEvent())
                 }
             }
 
             //  when app runs for the first time
         } else {
-            /*//  Internet has to be active for the first time
-            val connectivityResult = checkInternetAndAirplaneMode()
-            if (!connectivityResult[0] || !connectivityResult[1])
-                showConnectionAlertDialog(connectivityResult[0], connectivityResult[1])*/
-
             editor.putLong(Constants.LAST_NETWORK_REQUEST_TIME, System.currentTimeMillis())
             editor.commit()
 
@@ -205,8 +154,10 @@ class MainActivity : DaggerAppCompatActivity(),
                 viewModel.setStateEvent(GetNationalResourceNetworkEvent())
 
                 delay(3000)
-
                 viewModel.setStateEvent(GetNationalDataNetworkEvent())
+
+                delay(3000)
+                viewModel.setStateEvent(GetTimeSeriesNetworkEvent())
 
                 editor.putLong(Constants.LATEST_UPDATED_TIME, System.currentTimeMillis())
                 editor.commit()
@@ -327,13 +278,15 @@ class MainActivity : DaggerAppCompatActivity(),
         val multiplePermissionsListener = object : MultiplePermissionsListener {
             override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
                 p0?.let {
-                    Log.d(
-                        TAG,
-                        "onPermissionsChecked: all permissions ${it.areAllPermissionsGranted()}"
-                    )
-
                     if (it.areAllPermissionsGranted()) {
                         getUsersLocation()
+
+                        //  start bluetooth
+                        //  TODO: crash if it is not on
+                        BluetoothAdapter.getDefaultAdapter().let {
+                            if (!it.isEnabled) it.enable()
+                        }
+                        actionOnService(Actions.START)
                     }
                     if (!it.areAllPermissionsGranted())
                         navigateToSettingAlertDialog()
@@ -367,6 +320,7 @@ class MainActivity : DaggerAppCompatActivity(),
         return arrayOf(city, state)
     }
 
+    //  start the service
     private fun actionOnService(action: Actions) {
         if (getServiceState(this) == ServiceState.STOPPED && action == Actions.STOP) return
         Intent(this, NearbyIntentService::class.java).also {

@@ -138,6 +138,7 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation 'com.google.firebase:firebase-auth:19.3.1'
     implementation "com.google.android.gms:play-services-auth:$google_play_services"
+    implementation 'com.google.firebase:firebase-database-ktx:19.3.0'
 
     //  dexter for permissions
     implementation "com.karumi:dexter:$dexter"
@@ -153,4 +154,7 @@ dependencies {
 
     //  shimmer animation
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    // MPAndroidChart - for making graph
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

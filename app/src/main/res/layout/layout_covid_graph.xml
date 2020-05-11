@@ -3,18 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/covid_graph_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ff073a">
+            android:background="#F88AA0"
+            app:tabTextColor="@color/white"
+            app:tabIndicatorColor="@color/white"
+            >
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -37,7 +42,6 @@
             android:id="@+id/covid_graph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

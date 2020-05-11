@@ -1,5 +1,7 @@
 package com.example.mvi_scaffolding.utils
 
+import android.graphics.Color
+
 class Constants {
 
     companion object{
@@ -35,5 +37,16 @@ class Constants {
 
         //  main activity
         const val LATEST_UPDATED_TIME = "LATEST_UPDATED_TIME"
+
+        //  graphs
+         var PRIMARY_RED = Color.rgb(255, 7, 58)
+         var SECONDARY_RED = Color.argb(32, 255, 7, 58)
+         var TEXT_RED = Color.argb(153, 255, 7, 58)
+         var PRIMARY_GREEN = Color.rgb(40, 167, 69)
+         var SECONDARY_GREEN = Color.argb(32, 40, 167, 69)
+         var TEXT_GREEN = Color.argb(153, 40, 167, 69)
+         var PRIMARY_GRAY = Color.rgb(108, 117, 125)
+         var SECONDARY_GRAY = Color.argb(32, 108, 117, 125)
+         var TEXT_GRAY = Color.argb(153, 108, 117, 125)
     }
 }

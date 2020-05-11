@@ -27,7 +27,7 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
           is GetTimeSeriesNetworkEvent -> {
               Log.d(TAG, "handleStateEvent: GetTimeSeriesNetworkEvent")
 
-              return mainRepository.getNationalData(isNetworkRequest = true)
+              return mainRepository.getTimeSeries(isNetworkRequest = true)
           }
           is GetNationalResourceNetworkEvent -> {
               Log.d(TAG, "handleStateEvent: GetNationalResourceNetworkEvent")

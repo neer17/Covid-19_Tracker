@@ -28,6 +28,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.auth.AuthActivity">
+
+        </activity>
+
         <service
             android:name=".firebase.MyFirebaseMessagingService"
             android:exported="false">
