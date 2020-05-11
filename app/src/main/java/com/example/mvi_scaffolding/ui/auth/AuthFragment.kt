@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.auth_frag_middle.*
 import kotlinx.android.synthetic.main.fragment_auth.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -96,13 +97,13 @@ class AuthFragment : DaggerFragment() {
             startPhoneNumberVerification()
         }
 
-        confirm_code_btn.setOnClickListener {
+        /*confirm_code_btn.setOnClickListener {
             val code = code_verify_et.text.toString()
             if (code.isNotEmpty()) {
                 val credentials = PhoneAuthProvider.getCredential(_verificationId!!, code)
                 signInWithPhoneCredentials(credentials)
             }
-        }
+        }*/
     }
 
     fun signInWithPhoneCredentials(credential: PhoneAuthCredential) {
