@@ -1,8 +1,10 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.api.main.network_responses.NationalResource
+import com.example.mvi_scaffolding.firebase.FirebaseHandler
 import com.example.mvi_scaffolding.utils.Constants
 import kotlinx.android.synthetic.main.frag_home_layout_middle.*
 import kotlinx.android.synthetic.main.frag_home_layout_part_end.*
@@ -22,6 +25,8 @@ import kotlinx.android.synthetic.main.layout_home_frag_card.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class HomeFragment : BaseMainFragment() {
@@ -72,13 +77,20 @@ class HomeFragment : BaseMainFragment() {
                     }
                 }
             }
+            
+            viewState.contractionLocation?.let {
+                val (lat, lang) = it
+                val location = getReadableLocation(lat, lang)
+
+                viewState.contractionTime?.let {time ->
+                    val formattedTime = convertTime(time)
+                    home_frag_color_card_tv.text = "You got contracted at $location at time $formattedTime"
+                }
+            }
 
             viewState.threatLevel?.let {
                 val username = sharedPreferences.getString(Constants.USERNAME, null)
                 when (it) {
-                    Constants.SAFE -> {
-                        home_frag_color_card_tv.text = "$username, You are safe"
-                    }
                     Constants.SYMPTOMS -> {
                         home_frag_color_card_tv.text =
                             "$username, you may have symptoms, STAY INDOORS"
@@ -89,20 +101,47 @@ class HomeFragment : BaseMainFragment() {
                             "$username, You have a travel history, stay in QUARANTINE for 14 days"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.yellow))
                     }
-                    Constants.DANGER -> {
-                        home_frag_color_card_tv.text =
-                            "$username, You might have been contracted with COVID-19, GET HELP NOW"
-                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
-                    }
                     Constants.VULNERABLE -> {
                         home_frag_color_card_tv.text =
                             "$username, You are most vulnerable to COVID-19, STAY INDOORS"
                         home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
                     }
+                    Constants.DANGER -> {
+                        home_frag_color_card_tv.text =
+                            "$username, You might have been contracted with COVID-19, GET HELP NOW"
+                        home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
+
+                        //  updating the database
+                        val uid = sharedPreferences.getString(Constants.UID, null)
+                        uid?.let {
+                            FirebaseHandler(activity!!).updateCovidPositiveStatus(it, true)
+                                .addOnSuccessListener {
+                                    Log.d(TAG, "subscribeObservers: data uploaded success")
+                                }.addOnFailureListener {
+                                    Log.e(TAG, "subscribeObservers: ", it)
+                                }
+                        }
+                    }
+                    else -> {
+                        home_frag_color_card_tv.text = "$username, You are safe"
+                    }
                 }
             }
         })
     }
+
+    private fun convertTime(timeInMillis: Long): String {
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.UK)
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = timeInMillis
+            return simpleDateFormat.format(calendar.time)
+    }
+    
+    private fun getReadableLocation(lat: Double, lang: Double): String {
+        geocoder = Geocoder(activity, Locale.getDefault())
+        return geocoder.getFromLocation(lat, lang, 1)[0].locality
+    }
+    
 
     private fun setCityName(city: String) {
         city_name.text = city

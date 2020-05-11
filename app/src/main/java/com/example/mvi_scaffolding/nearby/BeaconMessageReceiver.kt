@@ -15,7 +15,6 @@ class BeaconMessageReceiver : BroadcastReceiver() {
             override fun onFound(message: Message) {
                 // store data in firebase database
                 FirebaseHandler(context).updateDataOnNearby(
-                    intent.getStringExtra("uid")!!,
                     String(message.content),
                     intent.getDoubleExtra("lat", 0.0),
                     intent.getDoubleExtra("lang", 0.0)

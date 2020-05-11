@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.mvi_scaffolding.BaseApplication
 import com.example.mvi_scaffolding.R
@@ -15,6 +16,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.MessagesOptions
 import com.google.android.gms.nearby.messages.NearbyPermissions
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -22,6 +24,8 @@ import kotlinx.coroutines.launch
 
 
 class NearbyIntentService : Service() {
+    private val TAG = NearbyIntentService::class.java.simpleName
+
     companion object {
         private const val CHANNEL_ID = "ForegroundServiceChannel"
     }
@@ -33,6 +37,8 @@ class NearbyIntentService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "onCreate: ")
+        
         val notification = createNotification()
         startForeground(1, notification)
     }
@@ -73,7 +79,7 @@ class NearbyIntentService : Service() {
                 launch(Dispatchers.IO) {
                     doNearbySearching()
                 }
-                delay(5 * 60 * 1000)
+                delay(30 * 1000)
             }
         }
     }
@@ -99,7 +105,7 @@ class NearbyIntentService : Service() {
         // permission for nearby api
         val messagesClient = Nearby.getMessagesClient(
             context, MessagesOptions.Builder()
-                .setPermissions(NearbyPermissions.BLE)
+                .setPermissions(NearbyPermissions.DEFAULT)
                 .build()
         )
 
@@ -108,16 +114,22 @@ class NearbyIntentService : Service() {
             .getFusedLocationProviderClient(this)
             .lastLocation
             .addOnSuccessListener { location: Location? ->
-                nearbyUtils = NearbyUtils(
-                    context,
-                    messagesClient,
-                    "uid2"
-                )
-                val lat = location?.latitude
-                val lang = location?.longitude
+                Log.d(TAG, "doNearbySearching: location ${location!!.latitude}")
 
-                nearbyUtils.backgroundSubscribe(lat, lang)
-                nearbyUtils.publish()
+                FirebaseAuth.getInstance().uid?.let { uid ->
+                    Log.d(TAG, "doNearbySearching: service uid $uid")
+
+                    nearbyUtils = NearbyUtils(
+                        context,
+                        messagesClient,
+                        uid
+                    )
+                    val lat = location?.latitude
+                    val lang = location?.longitude
+
+                    nearbyUtils.backgroundSubscribe(lat, lang)
+                    nearbyUtils.publish()
+                }
             }
     }
 

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.example.mvi_scaffolding.R
+import com.example.mvi_scaffolding.firebase.FirebaseHandler
 import com.example.mvi_scaffolding.ui.main.MainActivity
 import com.example.mvi_scaffolding.utils.Constants
 import com.google.firebase.FirebaseException
@@ -33,6 +34,8 @@ class AuthFragment : DaggerFragment() {
 
     @Inject
     lateinit var editor: SharedPreferences.Editor
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private var countDownTimer: CountDownTimer? = null
 
@@ -97,13 +100,13 @@ class AuthFragment : DaggerFragment() {
             startPhoneNumberVerification()
         }
 
-        /*confirm_code_btn.setOnClickListener {
+        confirm_code_btn.setOnClickListener {
             val code = code_verify_et.text.toString()
             if (code.isNotEmpty()) {
                 val credentials = PhoneAuthProvider.getCredential(_verificationId!!, code)
                 signInWithPhoneCredentials(credentials)
             }
-        }*/
+        }
     }
 
     fun signInWithPhoneCredentials(credential: PhoneAuthCredential) {
@@ -115,15 +118,10 @@ class AuthFragment : DaggerFragment() {
                     countDownTimer?.cancel()
 
                     val user = task.result?.user
+                    saveUid(user!!.uid)
 
-                    //  putting value in shared prefs
-                    editor.putBoolean(Constants.USER_LOGGED_IN, true)
-                    editor.commit()
-
-                    val intent = Intent(activity, MainActivity::class.java)
-                    startActivity(intent)
-                    activity!!.finish()
-
+                    //  updating the database
+                    updatingTheDatabase(user.uid)
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -133,6 +131,33 @@ class AuthFragment : DaggerFragment() {
                 }
             }
     }
+
+    private fun updatingTheDatabase(uid: String) {
+        val username = getUsername()
+        val phoneNumber = getPhoneNumber()
+        username?.let {name ->
+            phoneNumber?.let {number ->
+                FirebaseHandler(activity!!).updateUserBasicInfo(uid, name, number, false)
+                    .addOnSuccessListener {
+                        //  putting value in shared prefs
+                        editor.putBoolean(Constants.USER_LOGGED_IN, true)
+                        editor.commit()
+
+                        val intent = Intent(activity, MainActivity::class.java)
+                        startActivity(intent)
+                        activity!!.finish()
+                    }.addOnFailureListener {
+                        Log.e(TAG, "signInWithPhoneCredentials: ", it)
+                    }
+            }
+        }
+    }
+
+    private fun saveUid(uid: String) {
+        editor.putString(Constants.UID, uid)
+        editor.commit()
+    }
+
     private fun startPhoneNumberVerification() {
         var phoneNumber = view!!.findViewById<TextView>(R.id.phone_number_et).text.toString()
         val username = name_et.text.toString()
@@ -148,6 +173,7 @@ class AuthFragment : DaggerFragment() {
         saveUsername(username)
 
         phoneNumber = "+91$phoneNumber"
+        savePhoneNumber(phoneNumber)
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             phoneNumber, // Phone number to verify
@@ -177,5 +203,18 @@ class AuthFragment : DaggerFragment() {
     private fun saveUsername(username: String) {
         editor.putString(Constants.USERNAME, username)
         editor.commit()
+    }
+
+    private fun getUsername(): String? {
+        return sharedPreferences.getString(Constants.USERNAME, null)
+    }
+
+    private fun savePhoneNumber(phoneNumber: String) {
+        editor.putString(Constants.PHONE_NUMBER, phoneNumber)
+        editor.commit()
+    }
+
+    private fun getPhoneNumber(): String? {
+        return sharedPreferences.getString(Constants.PHONE_NUMBER, null)
     }
 }

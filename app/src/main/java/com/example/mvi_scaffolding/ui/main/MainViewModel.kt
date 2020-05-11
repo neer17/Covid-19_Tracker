@@ -105,4 +105,16 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
         _viewState.value = update
     }
 
+    fun setContractionLocation(location: Array<Double>) {
+        val update = getCurrentViewStateOrNew()
+        update.contractionLocation = location
+        _viewState.value = update
+    }
+
+    fun setContractionTime(time: Long) {
+        val update = getCurrentViewStateOrNew()
+        update.contractionTime = time
+        _viewState.value = update
+    }
+
 }

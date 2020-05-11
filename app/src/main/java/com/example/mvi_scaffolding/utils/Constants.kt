@@ -26,6 +26,8 @@ class Constants {
         const val LAST_KNOW_CITY_AND_STATE = "LAST_KNOW_CITY_AND_STATE"
         const val USERNAME = "USERNAME"
         const val USER_LOGGED_IN = "USER_LOGGED_IN"
+        const val PHONE_NUMBER = "PHONE_NUMBER"
+        const val UID = "UID"
 
         //  Assessment fragment
         const val SAFE = "Safe"
@@ -48,5 +50,11 @@ class Constants {
          var PRIMARY_GRAY = Color.rgb(108, 117, 125)
          var SECONDARY_GRAY = Color.argb(32, 108, 117, 125)
          var TEXT_GRAY = Color.argb(153, 108, 117, 125)
+
+        //  firebase messaging service
+        const val DATA_LANG = "DATA_LANG"
+        const val DATA_LAT = "DATA_LAT"
+        const val DATA_TIME = "DATA_TIME"
+
     }
 }

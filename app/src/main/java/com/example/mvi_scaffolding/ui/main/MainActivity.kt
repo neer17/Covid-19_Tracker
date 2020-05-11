@@ -110,6 +110,18 @@ class MainActivity : DaggerAppCompatActivity(),
         getNationalDataAndResources()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            val lat = it.getDoubleExtra(Constants.DATA_LAT, 0.0)
+            val lang = it.getDoubleExtra(Constants.DATA_LANG, 0.0)
+            val time = it.getLongExtra(Constants.DATA_TIME, 0L)
+
+            viewModel.setContractionLocation(arrayOf(lat, lang))
+            viewModel.setContractionTime(time)
+        }
+    }
+
     //  make network req or read data from cache
     private fun getNationalDataAndResources() {
         val lastNetworkRequestTime =
@@ -284,6 +296,8 @@ class MainActivity : DaggerAppCompatActivity(),
                         //  start bluetooth
                         //  TODO: crash if it is not on
                         BluetoothAdapter.getDefaultAdapter().let {
+                            Log.d(TAG, "onPermissionsChecked: bluetooth")
+
                             if (!it.isEnabled) it.enable()
                         }
                         actionOnService(Actions.START)
@@ -314,7 +328,7 @@ class MainActivity : DaggerAppCompatActivity(),
             .check()
     }
 
-    private fun getCityAndState(location: Location): Array<String> {
+    fun getCityAndState(location: Location): Array<String> {
         val city = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].locality
         val state = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].adminArea
         return arrayOf(city, state)
