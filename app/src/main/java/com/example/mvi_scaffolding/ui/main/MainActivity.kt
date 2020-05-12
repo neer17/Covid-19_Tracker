@@ -83,8 +83,8 @@ class MainActivity : DaggerAppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        (applicationContext as BaseApplication).mCurrentActivity = this
 
+        (applicationContext as BaseApplication).mCurrentActivity = this
 
         //  bottom navigation bar
         bottomNavigationView = findViewById(R.id.bottomNavigationView)

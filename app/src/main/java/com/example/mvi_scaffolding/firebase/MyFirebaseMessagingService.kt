@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.mvi_scaffolding.R
+import com.example.mvi_scaffolding.broadcasts.MyBroadcastReceiver
 import com.example.mvi_scaffolding.ui.main.MainActivity
 import com.example.mvi_scaffolding.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -58,9 +59,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Firebase.database.reference.child("cross_location")
             .child(positiveUid).child(currentUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
+
                 override fun onCancelled(p0: DatabaseError) {
                     Log.e(TAG, "onCancelled: ", p0.toException())
-
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -81,11 +82,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun createNotification(lat: Double, lang: Double, time: Long) {
         createNotificationChannel()
-        val pendingIntent = Intent(this, MainActivity::class.java)
+        val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
             .let {
                 it.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                Log.d(TAG, "onDataChange: lat $lat, lang $lang, time $time")
                 it.putExtra(Constants.DATA_LANG, lang)
                 it.putExtra(Constants.DATA_LAT, lat)
                 it.putExtra(Constants.DATA_TIME, time)
@@ -95,11 +95,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     101, it, PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
-        val notification = NotificationCompat.Builder(this, MyFirebaseMessagingService.CHANNEL_ID)
-            .setContentTitle("Danger")
+
+        val broadcastPendingIntent = Intent(this, MyBroadcastReceiver::class.java)
+            .let {
+                PendingIntent.getBroadcast(this, 102, it, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("DANGER")
             .setContentText("You came in contact of a Covid-19 positive person, click to see the details")
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(mainActivityPendingIntent)
+            .setDeleteIntent(broadcastPendingIntent)
             .setAutoCancel(true)
             .build()
 
@@ -111,7 +118,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
-                MyFirebaseMessagingService.CHANNEL_ID,
+                CHANNEL_ID,
                 "Foreground Service Channel",
                 NotificationManager.IMPORTANCE_HIGH
             )

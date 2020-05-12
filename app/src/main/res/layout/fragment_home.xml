@@ -85,7 +85,6 @@
                         android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:maxLines="2"
                         android:paddingBottom="100dp"
                         android:text="You are safe"
                         android:textColor="@color/white"

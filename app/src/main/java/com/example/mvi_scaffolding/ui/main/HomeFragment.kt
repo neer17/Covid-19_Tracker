@@ -85,6 +85,7 @@ class HomeFragment : BaseMainFragment() {
                 viewState.contractionTime?.let {time ->
                     val formattedTime = convertTime(time)
                     home_frag_color_card_tv.text = "You got contracted at $location at time $formattedTime"
+                    home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
                 }
             }
 
@@ -139,7 +140,7 @@ class HomeFragment : BaseMainFragment() {
     
     private fun getReadableLocation(lat: Double, lang: Double): String {
         geocoder = Geocoder(activity, Locale.getDefault())
-        return geocoder.getFromLocation(lat, lang, 1)[0].locality
+        return geocoder.getFromLocation(lat, lang, 1)[0].getAddressLine(0)
     }
     
 
