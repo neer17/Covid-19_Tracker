@@ -212,9 +212,10 @@ class MainActivity : DaggerAppCompatActivity(),
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 //  UPDATE VIEW STATE
-                val (city, state) = getCityAndState(location!!)
-                viewModel.setCurrentLocation(arrayOf(city, state))
-
+                location?.let {
+                    val (city, state) = getCityAndState(location)
+                    viewModel.setCurrentLocation(arrayOf(city, state))
+                }
             }.addOnFailureListener { exception ->
                 Log.e(TAG, "getUsersLocation: error on getting location", exception)
             }
