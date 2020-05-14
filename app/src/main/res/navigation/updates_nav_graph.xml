@@ -12,7 +12,12 @@
         tools:layout="@layout/fragment_covid_updates">
         <action
             android:id="@+id/action_covidUpdatesFragment_to_nationWideDataDisplayFragment"
-            app:destination="@id/nationWideDataDisplayFragment" />
+            app:destination="@id/nationWideDataDisplayFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
     <fragment
         android:id="@+id/nationWideDataDisplayFragment"
@@ -21,6 +26,11 @@
         tools:layout="@layout/fragment_nation_wide_data_display" >
         <action
             android:id="@+id/action_nationWideDataDisplayFragment_to_covidUpdatesFragment"
-            app:destination="@id/updatesFragment" />
+            app:destination="@id/updatesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
 </navigation>

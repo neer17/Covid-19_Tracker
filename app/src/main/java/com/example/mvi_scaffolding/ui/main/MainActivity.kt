@@ -38,10 +38,8 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -68,6 +66,8 @@ class MainActivity : DaggerAppCompatActivity(),
     private lateinit var bottomNavigationView: BottomNavigationView
 
     lateinit var geocoder: Geocoder
+
+    private val mainScope = CoroutineScope(Main)
 
     private val bottomNavController by lazy(LazyThreadSafetyMode.NONE) {
         BottomNavController(
@@ -108,6 +108,8 @@ class MainActivity : DaggerAppCompatActivity(),
 
         getPermissions()
         getNationalDataAndResources()
+        readLastContractionDetails()
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -117,7 +119,33 @@ class MainActivity : DaggerAppCompatActivity(),
             val lang = it.getDoubleExtra(Constants.DATA_LANG, 0.0)
             val time = it.getLongExtra(Constants.DATA_TIME, 0L)
 
-            viewModel.setContractionLocation(arrayOf(lat, lang))
+            Log.d(TAG, "onNewIntent:  lat $lat lang $lang time $time")
+
+
+            //  storing into SharedPreferences
+            editor.putString(Constants.DATA_LAT, lat.toString())
+            editor.putString(Constants.DATA_LANG, lang.toString())
+            editor.putLong(Constants.DATA_TIME, time)
+            editor.commit()
+        }
+        readLastContractionDetails()
+    }
+
+    private fun readLastContractionDetails() {
+        val lat = sharedPreferences.getString(Constants.DATA_LAT, null)
+        val lang = sharedPreferences.getString(Constants.DATA_LANG, null)
+        val time = sharedPreferences.getLong(Constants.DATA_TIME, 0L)
+
+        Log.d(
+            TAG,
+            "readLastContractionDetails: shared preferences ${sharedPreferences.contains(Constants.DATA_LANG)}"
+        )
+
+
+        if (!lat.isNullOrEmpty() && !lang.isNullOrEmpty() && time != 0L) {
+            Log.d(TAG, "readLastContractionDetails: ")
+
+            viewModel.setContractionLocation(arrayOf(lat.toDouble(), lang.toDouble()))
             viewModel.setContractionTime(time)
         }
     }
@@ -208,17 +236,25 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     private fun getUsersLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                //  UPDATE VIEW STATE
-                location?.let {
-                    val (city, state) = getCityAndState(location)
-                    viewModel.setCurrentLocation(arrayOf(city, state))
-                }
-            }.addOnFailureListener { exception ->
-                Log.e(TAG, "getUsersLocation: error on getting location", exception)
+        mainScope.launch {
+            coroutineScope {
+                val fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(this@MainActivity)
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        //  UPDATE VIEW STATE
+                        location?.let {
+                            val (city, state) = getCityAndState(location)
+                            viewModel.setCurrentLocation(arrayOf(city, state))
+
+                        }
+
+                    }.addOnFailureListener { exception ->
+                        Log.e(TAG, "getUsersLocation: error on getting location", exception)
+                    }
             }
+
+        }
     }
 
     //  used in "onNavigationItemSelected"
@@ -272,7 +308,7 @@ class MainActivity : DaggerAppCompatActivity(),
         setSupportActionBar(findViewById(R.id.toolbar))
     }
 
-    fun expandAppBar() {
+    private fun expandAppBar() {
         findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true)
     }
 
@@ -329,7 +365,7 @@ class MainActivity : DaggerAppCompatActivity(),
             .check()
     }
 
-    fun getCityAndState(location: Location): Array<String> {
+    private fun getCityAndState(location: Location): Array<String> {
         val city = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].locality
         val state = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].adminArea
         return arrayOf(city, state)
@@ -346,5 +382,10 @@ class MainActivity : DaggerAppCompatActivity(),
             }
             startService(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 }

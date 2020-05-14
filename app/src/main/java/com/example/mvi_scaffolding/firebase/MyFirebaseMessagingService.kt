@@ -98,6 +98,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val broadcastPendingIntent = Intent(this, MyBroadcastReceiver::class.java)
             .let {
+                it.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                it.putExtra(Constants.DATA_LANG, lang)
+                it.putExtra(Constants.DATA_LAT, lat)
+                it.putExtra(Constants.DATA_TIME, time)
                 PendingIntent.getBroadcast(this, 102, it, PendingIntent.FLAG_UPDATE_CURRENT)
             }
 

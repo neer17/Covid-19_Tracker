@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.MaterialComponents.Light"
+    app:strokeColor="@color/colorPrimary"
+    app:strokeWidth="1dp"
+    android:outlineAmbientShadowColor="@color/colorPrimaryDark"
     app:cardElevation="8dp">
 
     <com.facebook.shimmer.ShimmerFrameLayout

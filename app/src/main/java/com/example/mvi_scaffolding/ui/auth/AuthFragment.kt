@@ -61,26 +61,23 @@ class AuthFragment : DaggerFragment() {
                 } else if (e is FirebaseNetworkException) {
                     Toast.makeText(activity, "Turn on the internet connection and try again", Toast.LENGTH_SHORT)
                         .show()
-                    return
+                } else {
+                    Toast.makeText(activity, "Verification failed, try again", Toast.LENGTH_SHORT)
+                        .show()
                 }
 
-                Toast.makeText(activity, "Verification failed, try again", Toast.LENGTH_SHORT)
-                    .show()
+                auth_frag_verify_btn.isEnabled = true
             }
 
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
-//                Log.d(TAG, "onCodeSent:$verificationId")
-
                 // Save verification ID and resending token so we can use them later
                 _verificationId = verificationId
-//                resendToken = token
 
                 //  disabling btn and starting chronometer
                 setCountDownTimer()
-                auth_frag_verify_btn.isEnabled = false
             }
         }
     }
@@ -159,6 +156,9 @@ class AuthFragment : DaggerFragment() {
     }
 
     private fun startPhoneNumberVerification() {
+        //  disable button
+        auth_frag_verify_btn.isEnabled = false
+
         var phoneNumber = view!!.findViewById<TextView>(R.id.phone_number_et).text.toString()
         val username = name_et.text.toString()
         if (username.isNullOrEmpty()) {
@@ -189,7 +189,7 @@ class AuthFragment : DaggerFragment() {
             override fun onTick(millisUntilFinished: Long) {
                 count_down_timer_tv.text = java.lang.String.format(
                     Locale.getDefault(),
-                    "%d",
+                    "00:%d",
                     millisUntilFinished / 1000L
                 )
             }

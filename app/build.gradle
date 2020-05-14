@@ -157,8 +157,4 @@ dependencies {
 
     // MPAndroidChart - for making graph
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
-    // Leak Canary
-    def leak_canary_version = "2.0-alpha-3"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
 }

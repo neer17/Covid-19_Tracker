@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_home_frag_card.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -63,6 +64,7 @@ class HomeFragment : BaseMainFragment() {
         subscribeObservers()
     }
 
+
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
 
@@ -70,24 +72,29 @@ class HomeFragment : BaseMainFragment() {
                 viewState.cityAndState?.let {
                     val city = it[0]
                     GlobalScope.launch(Main) {
-                        //  set data and start shimmer
-                        shimmer_container_frag_home_end.startShimmer()
-                        setCityName(city)
-                        setResourcesNumbers(city, nationalResource)
+                        coroutineScope {
+                            //  set data and start shimmer
+                            shimmer_container_frag_home_end.startShimmer()
+
+                            setCityName(city)
+                            setResourcesNumbers(city, nationalResource)
+
+                            shimmer_container_frag_home_end.stopShimmer()
+                        }
                     }
                 }
             }
-            
-            viewState.contractionLocation?.let {
-                val (lat, lang) = it
-                val location = getReadableLocation(lat, lang)
 
-                viewState.contractionTime?.let {time ->
-                    val formattedTime = convertTime(time)
-                    home_frag_color_card_tv.text = "You got contracted at $location at time $formattedTime"
-                    home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
-                }
-            }
+             viewState.contractionLocation?.let {
+                 val (lat, lang) = it
+                 val location = getReadableLocation(lat, lang)
+
+                 viewState.contractionTime?.let {time ->
+                     val formattedTime = convertTime(time)
+                     home_frag_color_card_tv.text = "You got contracted at $location at time $formattedTime"
+                     home_frag_color_card.setBackgroundColor(resources.getColor(R.color.red))
+                 }
+             }
 
             viewState.threatLevel?.let {
                 val username = sharedPreferences.getString(Constants.USERNAME, null)
@@ -132,17 +139,17 @@ class HomeFragment : BaseMainFragment() {
     }
 
     private fun convertTime(timeInMillis: Long): String {
-            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.UK)
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = timeInMillis
-            return simpleDateFormat.format(calendar.time)
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.UK)
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timeInMillis
+        return simpleDateFormat.format(calendar.time)
     }
-    
+
     private fun getReadableLocation(lat: Double, lang: Double): String {
         geocoder = Geocoder(activity, Locale.getDefault())
-        return geocoder.getFromLocation(lat, lang, 1)[0].getAddressLine(0)
+        return geocoder.getFromLocation(lat, lang, 1)[0].featureName
     }
-    
+
 
     private fun setCityName(city: String) {
         city_name.text = city
@@ -214,9 +221,6 @@ class HomeFragment : BaseMainFragment() {
         }
         hospitals_numbers.text = concatenatingString
         hospitals_numbers.isSelected = true
-
-        //  end shimmer
-        shimmer_container_frag_home_end.stopShimmer()
     }
 
     private fun setAnimationOnArrow() {

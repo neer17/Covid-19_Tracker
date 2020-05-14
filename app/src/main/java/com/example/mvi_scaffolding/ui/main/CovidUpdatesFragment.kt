@@ -28,6 +28,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_covid_updates.*
 import java.text.SimpleDateFormat
@@ -82,7 +83,7 @@ class CovidUpdatesFragment : BaseMainFragment() {
 
         subscribeObservers()
 
-        view.findViewById<TextView>(R.id.view_data_by_state_tv).setOnClickListener {
+        view.findViewById<MaterialCardView>(R.id.view_data_by_state_tv).setOnClickListener {
             findNavController().navigate(R.id.action_covidUpdatesFragment_to_nationWideDataDisplayFragment)
         }
 
