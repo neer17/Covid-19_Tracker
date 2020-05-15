@@ -1,11 +1,11 @@
 ## Screenshots:
-![Get Started](https://drive.google.com/file/d/1_XgozYN3qI2M8ZhF9NnUUcrwSCZb9kcV/view?usp=sharing)
+![Get Started](https://drive.google.com/uc?export=view&id=1_XgozYN3qI2M8ZhF9NnUUcrwSCZb9kcV)
 
 
-![Main Activity](https://drive.google.com/file/d/1UF5IwdxIyblhAJkoU9Sqc25JvGhA_D3q/view?usp=sharing)
+![Main Activity](https://drive.google.com/uc?export=view&id=1UF5IwdxIyblhAJkoU9Sqc25JvGhA_D3q)
 
 
-![Covid Data](https://drive.google.com/file/d/1jOFQEZk_lcx_viIurLqPyQ3BuSl_YD_m/view?usp=sharing)
+![Covid Data](https://drive.google.com/uc?export=view&id=1jOFQEZk_lcx_viIurLqPyQ3BuSl_YD_m)
 
 ## Features:
   - Working: When two people come close then this contact would be capture, in future if one of them comes in contact of COVID-19 then other wiil get notified.
