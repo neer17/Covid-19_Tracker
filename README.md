@@ -1,11 +1,11 @@
 ## Screenshots:
-![Get Started](./screenshots/GetStarted.jpeg)
-![Login](./screenshots/Login.jpeg)
-![Main Activity](./screenshots/MainActivity.jpeg)
-![Awareness](./screenshots/Awareness.jpeg)
-![Assessment ](./screenshots/Assessment.jpeg)
-![Covid Data](./screenshots/Graph.jpeg)
-![Statewise Data](./screenshots/Statewise.jpeg)
+![Get Started](./screenshots/Group1.png)
+
+
+![Main Activity](./screenshots/Group2.png)
+
+
+![Covid Data](./screenshots/Group3.png)
 
 ## Features:
   - Working: When two people come close then this contact would be capture, in future if one of them comes in contact of COVID-19 then other wiil get notified.
