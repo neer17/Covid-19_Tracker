@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.example.mvi_scaffolding.utils.Constants
 import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessagesClient
 import com.google.android.gms.nearby.messages.Strategy.BLE_ONLY
@@ -20,24 +21,31 @@ class NearbyUtils(
 
     companion object {
         private var isSubscribed = false
-        private var isPublished = false
+    }
+
+    private val isPositive: Message by lazy {
+        val sp = context.getSharedPreferences(Constants.APP_PREFERENCES, Context.MODE_PRIVATE)
+        val isCovidPositive = sp.getString(Constants.IS_COVID_POSITIVE, "false").toString()
+        Message(isCovidPositive.toByteArray(), "positiveStatus")
     }
 
     private val mMessagesClient = messagesClient
     private val mContext = context
     private val currentUid = uid
-    private var mMessage = Message(currentUid.toByteArray())
+    private var mMessage = Message(currentUid.toByteArray(), "uid")
+
+
+    private fun publishUid() {
+        mMessagesClient.publish(mMessage)
+    }
+
+    private fun publishPositive() {
+        mMessagesClient.publish(isPositive)
+    }
 
     fun publish() {
-        mMessagesClient.publish(mMessage)
-            .addOnSuccessListener {
-                Log.d(TAG, "publish: ")
-
-                isPublished = true
-            }.addOnFailureListener {
-                Log.e(TAG, "publish: ", it)
-
-            }
+        publishUid()
+        publishPositive()
     }
 
     fun backgroundSubscribe(lat: Double?, lang: Double?) {
@@ -72,9 +80,21 @@ class NearbyUtils(
     }
 
     private fun unPublish() {
+        unPublishPositive()
+        unPublishUid()
+    }
+
+    private fun unPublishUid() {
         mMessagesClient.unpublish(mMessage)
             .addOnSuccessListener {
-                publish()
+                publishUid()
+            }
+    }
+
+    private fun unPublishPositive() {
+        mMessagesClient.unpublish(isPositive)
+            .addOnSuccessListener {
+                publishPositive()
             }
     }
 

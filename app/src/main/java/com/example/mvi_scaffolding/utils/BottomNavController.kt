@@ -60,7 +60,7 @@ class BottomNavController(
         navItemChangeListener.onItemChanged(itemId)
 
         // communicate with Activity
-        graphChangeListener?.onGraphChange(itemId)
+        graphChangeListener?.onGraphChange(fragment)
 
         return true
     }
@@ -133,11 +133,11 @@ class BottomNavController(
     // Execute when Navigation Graph changes.
     // ex: Select a new item on the bottom navigation
     // ex: Home -> Account
-    interface OnNavigationGraphChanged{
-        fun onGraphChange(@IdRes itemId: Int)
+    interface OnNavigationGraphChanged {
+        fun onGraphChange(fragment: Fragment)
     }
 
-    interface OnNavigationReselectedListener{
+    interface OnNavigationReselectedListener {
         fun onReselectNavItem(navController: NavController, fragment: Fragment)
     }
 
@@ -190,6 +190,7 @@ fun BottomNavigationView.setUpNavigation(
     //  this HOF in going to be in the memory upon first invocation of this function
     bottomNavController.setOnItemNavigationChanged { itemId ->
         Log.d(TAG, "setUpNavigation: menu item changed")
+
         menu.findItem(itemId).isChecked = true
     }
 }

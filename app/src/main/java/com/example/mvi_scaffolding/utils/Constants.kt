@@ -57,6 +57,7 @@ class Constants {
         const val DATA_LAT = "DATA_LAT"
         const val DATA_TIME = "DATA_TIME"
         const val CONTRACTION_DETAILS = "CONTRACTION_DETAILS"
+        const val IS_COVID_POSITIVE = "IS_COVID_POSITIVE"
 
     }
 }

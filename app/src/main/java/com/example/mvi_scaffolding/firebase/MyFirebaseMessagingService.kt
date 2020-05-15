@@ -45,7 +45,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "onMessageReceived: $remoteMessage.")
 
@@ -72,15 +71,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val data = snapshot.value as HashMap<*, *>
+
                     val dataTimestamp = data["timestamp"] as Long
                     val location = data["location"] as HashMap<*, *>
                     val lat = location["lat"] as Double
                     val lang = location["lang"] as Double
 
-                    Log.d(TAG, "onDataChange: lat $lat, lang $lang, time $dataTimestamp")
+                    Log.d(
+                        TAG,
+                        "onDataChange: datatimestamp ${dataTimestamp!!.javaClass.name} lat ${lat!!.javaClass.name} \t lang ${lang!!.javaClass.name}"
+                    )
+
+                    Log.d(TAG, "onDataChange: lat $lat lang $lang timestamp $dataTimestamp")
                     
 
-                    Log.d(TAG, "onDataChange: data class name ${data}")
                     createNotification(lat, lang, dataTimestamp)
                 }
             })

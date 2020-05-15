@@ -88,7 +88,6 @@ class MainActivity : DaggerAppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         (applicationContext as BaseApplication).mCurrentActivity = this
 
         //  bottom navigation bar
@@ -153,7 +152,7 @@ class MainActivity : DaggerAppCompatActivity(),
         intent?.let {
             val contractionDetailsJson = it.getStringExtra(Constants.CONTRACTION_DETAILS)
             editor.putString(Constants.CONTRACTION_DETAILS, contractionDetailsJson)
-            editor.apply()
+            editor.commit()
         }
     }
 
@@ -294,9 +293,7 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    override fun onGraphChange(itemId: Int) {
-//        cancelActiveJobs()
-
+    override fun onGraphChange(fragment: Fragment) {
         expandAppBar()
     }
 

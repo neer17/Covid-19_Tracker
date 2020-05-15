@@ -26,7 +26,7 @@ class AssessmentFragment : BaseMainFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Log.d(TAG, "onViewCreated: auth fragment")
-        
+
         view.findViewById<MaterialButton>(R.id.submit_btn).setOnClickListener {
 
             getThreatLevel()
@@ -74,13 +74,15 @@ class AssessmentFragment : BaseMainFragment() {
         else if (cg3OptionSelected == "Yes")
             threatLevel = Constants.QUARANTINE_TRAVEL_HISTORY
 
-        //  TODO: make request for push notifications
         if (radioBtnSelected == 1)
             threatLevel = Constants.DANGER
         if (radioBtnSelected == 2)
             threatLevel = Constants.DANGER
 
+        if (threatLevel == Constants.DANGER)
+            editor.putString(Constants.IS_COVID_POSITIVE, "true")
+
         editor.putString(Constants.DANGER_LEVEL, threatLevel)
-        editor.apply()
+        editor.commit()
     }
 }
