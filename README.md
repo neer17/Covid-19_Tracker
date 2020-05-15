@@ -1,3 +1,12 @@
+## Screenshots:
+![Get Started](./screenshots/GetStarted.jpeg)
+![Login](./screenshots/Login.jpeg)
+![Main Activity](./screenshots/MainActivity.jpeg)
+![Awareness](./screenshots/Awareness.jpeg)
+![Assessment ](./screenshots/Assessment.jpeg)
+![Covid Data](./screenshots/Graph.jpeg)
+![Statewise Data](./screenshots/Statewise.jpeg)
+
 ## Features:
   - Working: When two people come close then this contact would be capture, in future if one of them comes in contact of COVID-19 then other wiil get notified.
   - Data: data of all India level and the current state would be shown.
