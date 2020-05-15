@@ -147,7 +147,7 @@ class HomeFragment : BaseMainFragment() {
 
     private fun getReadableLocation(lat: Double, lang: Double): String {
         geocoder = Geocoder(activity, Locale.getDefault())
-        return geocoder.getFromLocation(lat, lang, 1)[0].featureName
+        return geocoder.getFromLocation(lat, lang, 1)[0].getAddressLine(0)
     }
 
 
@@ -155,7 +155,6 @@ class HomeFragment : BaseMainFragment() {
         city_name.text = city
     }
 
-    //  TODO: create a dedicated string for each textview and set all of them in the end
     private fun setResourcesNumbers(city: String, nationalResource: NationalResource) {
         val cityBasedResources = nationalResource.nationalResource.filter { it.city == city }
         val testingLabsList =

@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.mvi_scaffolding.R
 import com.example.mvi_scaffolding.broadcasts.MyBroadcastReceiver
+import com.example.mvi_scaffolding.models.ContractionDetails
 import com.example.mvi_scaffolding.ui.main.MainActivity
 import com.example.mvi_scaffolding.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -22,10 +23,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-    private val TAG = MyFirebaseMessagingService::class.java.simpleName
+    private val TAG = "AppDebug: " + MyFirebaseMessagingService::class.java.simpleName
 
     companion object {
         private const val CHANNEL_ID = "ForegroundServiceChannel"
@@ -33,12 +37,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private var notificationTitle: String? = null
     private var notificationBody: String? = null
-    lateinit var broadcastManager: LocalBroadcastManager
+    private lateinit var broadcastManager: LocalBroadcastManager
 
     override fun onCreate() {
         super.onCreate()
         broadcastManager = LocalBroadcastManager.getInstance(this)
     }
+
+
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "onMessageReceived: $remoteMessage.")
@@ -82,13 +88,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun createNotification(lat: Double, lang: Double, time: Long) {
         createNotificationChannel()
+
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        val jsonAdapter: JsonAdapter<ContractionDetails> =
+            moshi.adapter<ContractionDetails>(ContractionDetails::class.java)
+        val contractionDetailsJson = jsonAdapter.toJson(ContractionDetails(lat, lang, time))
+
         val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
             .let {
                 it.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                it.putExtra(Constants.DATA_LANG, lang)
-                it.putExtra(Constants.DATA_LAT, lat)
-                it.putExtra(Constants.DATA_TIME, time)
+                it.putExtra(Constants.CONTRACTION_DETAILS, contractionDetailsJson)
 
                 PendingIntent.getActivity(
                     this,
@@ -100,9 +112,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .let {
                 it.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                it.putExtra(Constants.DATA_LANG, lang)
-                it.putExtra(Constants.DATA_LAT, lat)
-                it.putExtra(Constants.DATA_TIME, time)
+                it.putExtra(Constants.CONTRACTION_DETAILS, contractionDetailsJson)
+
                 PendingIntent.getBroadcast(this, 102, it, PendingIntent.FLAG_UPDATE_CURRENT)
             }
 

@@ -114,8 +114,6 @@ class NearbyIntentService : Service() {
             .getFusedLocationProviderClient(this)
             .lastLocation
             .addOnSuccessListener { location: Location? ->
-                Log.d(TAG, "doNearbySearching: location ${location!!.latitude}")
-
                 FirebaseAuth.getInstance().uid?.let { uid ->
                     Log.d(TAG, "doNearbySearching: service uid $uid")
 

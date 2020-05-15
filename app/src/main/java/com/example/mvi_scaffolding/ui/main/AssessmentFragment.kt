@@ -80,7 +80,7 @@ class AssessmentFragment : BaseMainFragment() {
         if (radioBtnSelected == 2)
             threatLevel = Constants.DANGER
 
-        //  UPDATE VIEW STATE
-        viewModel.setThreatLevel(threatLevel)
+        editor.putString(Constants.DANGER_LEVEL, threatLevel)
+        editor.apply()
     }
 }

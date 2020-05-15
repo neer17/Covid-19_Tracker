@@ -36,6 +36,7 @@ class Constants {
         const val VULNERABLE = "Vulnerable"
         const val SYMPTOMS = "Symptoms"
         const val QUARANTINE_TRAVEL_HISTORY = "Quarantine Travel History"
+        const val DANGER_LEVEL = "DANGER_LEVEL"
 
         //  main activity
         const val LATEST_UPDATED_TIME = "LATEST_UPDATED_TIME"
@@ -55,6 +56,7 @@ class Constants {
         const val DATA_LANG = "DATA_LANG"
         const val DATA_LAT = "DATA_LAT"
         const val DATA_TIME = "DATA_TIME"
+        const val CONTRACTION_DETAILS = "CONTRACTION_DETAILS"
 
     }
 }

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import com.example.mvi_scaffolding.BaseApplication
 import com.example.mvi_scaffolding.R
+import com.example.mvi_scaffolding.models.ContractionDetails
 import com.example.mvi_scaffolding.nearby.Actions
 import com.example.mvi_scaffolding.nearby.NearbyIntentService
 import com.example.mvi_scaffolding.nearby.ServiceState
@@ -37,6 +38,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
@@ -47,7 +51,8 @@ import javax.inject.Inject
 class MainActivity : DaggerAppCompatActivity(),
     BottomNavController.NavGraphProvider,
     BottomNavController.OnNavigationGraphChanged,
-    BottomNavController.OnNavigationReselectedListener {
+    BottomNavController.OnNavigationReselectedListener,
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "AppDebug: " + MainActivity::class.java.simpleName
 
     @Inject
@@ -64,8 +69,9 @@ class MainActivity : DaggerAppCompatActivity(),
     lateinit var editor: SharedPreferences.Editor
 
     private lateinit var bottomNavigationView: BottomNavigationView
-
     lateinit var geocoder: Geocoder
+    lateinit var jsonAdapter: JsonAdapter<ContractionDetails>
+
 
     private val mainScope = CoroutineScope(Main)
 
@@ -78,7 +84,6 @@ class MainActivity : DaggerAppCompatActivity(),
             this
         )
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,8 +104,40 @@ class MainActivity : DaggerAppCompatActivity(),
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel::class.java)
 
         setupActionBar()
-
+        attachSharedPreferenceListener()
+        createMoshiAdapter()
         subscribeObservers()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        sharedPreferences?.let {
+            if (key == Constants.CONTRACTION_DETAILS) {
+                val contractionDetailsJson =
+                    sharedPreferences.getString(Constants.CONTRACTION_DETAILS, null)
+                contractionDetailsJson?.let {
+                    val contractionDetails = jsonAdapter.fromJson(contractionDetailsJson)
+                    viewModel.setContractionLocation(
+                        arrayOf(
+                            contractionDetails!!.lat,
+                            contractionDetails.lang
+                        )
+                    )
+                    viewModel.setContractionTime(contractionDetails.time)
+                }
+            }
+            if (key == Constants.DANGER_LEVEL) {
+                Log.d(TAG, "sharedPrefChangedListener: key == DANGER_LEVEL")
+
+                //  UPDATE VIEW STATE
+                if (!sharedPreferences.contains(Constants.CONTRACTION_DETAILS)) {
+                    val threatLevel = sharedPreferences.getString(Constants.DANGER_LEVEL, null)
+                    threatLevel?.let {
+                        viewModel.setThreatLevel(threatLevel)
+                    }
+                }
+
+            }
+        }
     }
 
     override fun onStart() {
@@ -108,47 +145,18 @@ class MainActivity : DaggerAppCompatActivity(),
 
         getPermissions()
         getNationalDataAndResources()
-        readLastContractionDetails()
-
     }
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let {
-            val lat = it.getDoubleExtra(Constants.DATA_LAT, 0.0)
-            val lang = it.getDoubleExtra(Constants.DATA_LANG, 0.0)
-            val time = it.getLongExtra(Constants.DATA_TIME, 0L)
-
-            Log.d(TAG, "onNewIntent:  lat $lat lang $lang time $time")
-
-
-            //  storing into SharedPreferences
-            editor.putString(Constants.DATA_LAT, lat.toString())
-            editor.putString(Constants.DATA_LANG, lang.toString())
-            editor.putLong(Constants.DATA_TIME, time)
-            editor.commit()
-        }
-        readLastContractionDetails()
-    }
-
-    private fun readLastContractionDetails() {
-        val lat = sharedPreferences.getString(Constants.DATA_LAT, null)
-        val lang = sharedPreferences.getString(Constants.DATA_LANG, null)
-        val time = sharedPreferences.getLong(Constants.DATA_TIME, 0L)
-
-        Log.d(
-            TAG,
-            "readLastContractionDetails: shared preferences ${sharedPreferences.contains(Constants.DATA_LANG)}"
-        )
-
-
-        if (!lat.isNullOrEmpty() && !lang.isNullOrEmpty() && time != 0L) {
-            Log.d(TAG, "readLastContractionDetails: ")
-
-            viewModel.setContractionLocation(arrayOf(lat.toDouble(), lang.toDouble()))
-            viewModel.setContractionTime(time)
+            val contractionDetailsJson = it.getStringExtra(Constants.CONTRACTION_DETAILS)
+            editor.putString(Constants.CONTRACTION_DETAILS, contractionDetailsJson)
+            editor.apply()
         }
     }
+
 
     //  make network req or read data from cache
     private fun getNationalDataAndResources() {
@@ -257,6 +265,22 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
+    private fun createMoshiAdapter() {
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        jsonAdapter =
+            moshi.adapter<ContractionDetails>(ContractionDetails::class.java)
+    }
+
+    private fun attachSharedPreferenceListener() {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    private fun removeSharedPreferenceListener() {
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
     //  used in "onNavigationItemSelected"
     override fun getNavGraphId(itemId: Int) = when (itemId) {
         R.id.nav_home -> {
@@ -272,6 +296,7 @@ class MainActivity : DaggerAppCompatActivity(),
 
     override fun onGraphChange(itemId: Int) {
 //        cancelActiveJobs()
+
         expandAppBar()
     }
 
@@ -331,7 +356,6 @@ class MainActivity : DaggerAppCompatActivity(),
                         getUsersLocation()
 
                         //  start bluetooth
-                        //  TODO: crash if it is not on
                         BluetoothAdapter.getDefaultAdapter().let {
                             Log.d(TAG, "onPermissionsChecked: bluetooth")
 
@@ -386,6 +410,7 @@ class MainActivity : DaggerAppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        removeSharedPreferenceListener()
         mainScope.cancel()
     }
 }
