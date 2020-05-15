@@ -1,6 +1,7 @@
 package com.example.mvi_scaffolding.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,6 +119,8 @@ class CovidUpdatesFragment : BaseMainFragment() {
                 // set data from api request
                 mainViewState.timeSeries?.let { timeSeries ->
                     mTimeSeriesData = timeSeries.timeSeriesDataList.takeLast(30)
+                    Log.d(TAG, "subscribeObservers: timeseries data $mTimeSeriesData")
+                    
                     updateGraph(mTimeSeriesData!!)
                 }
             }

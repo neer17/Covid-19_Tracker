@@ -245,22 +245,23 @@ class MainActivity : DaggerAppCompatActivity(),
     private fun getUsersLocation() {
         mainScope.launch {
             coroutineScope {
-                val fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(this@MainActivity)
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        //  UPDATE VIEW STATE
-                        location?.let {
-                            val (city, state) = getCityAndState(location)
-                            viewModel.setCurrentLocation(arrayOf(city, state))
-
+                try {
+                    val fusedLocationClient =
+                        LocationServices.getFusedLocationProviderClient(this@MainActivity)
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            //  UPDATE VIEW STATE
+                            location?.let {
+                                val (city, state) = getCityAndState(location)
+                                viewModel.setCurrentLocation(arrayOf(city, state))
+                            }
+                        }.addOnFailureListener { exception ->
+                            Log.e(TAG, "getUsersLocation: error on getting location", exception)
                         }
-
-                    }.addOnFailureListener { exception ->
-                        Log.e(TAG, "getUsersLocation: error on getting location", exception)
-                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "getUsersLocation: ", e)
+                }
             }
-
         }
     }
 

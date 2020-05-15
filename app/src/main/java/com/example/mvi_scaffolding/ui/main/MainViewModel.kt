@@ -20,37 +20,36 @@ constructor(val mainRepository: MainRepository) : BaseViewModel<MainStateEvent, 
     override fun handleStateEvent(stateEvent: MainStateEvent): LiveData<DataState<MainViewState>> {
       when(stateEvent) {
           is GetNationalDataNetworkEvent -> {
-              Log.d(TAG, "handleStateEvent: GetNationalDataNetworkEvent")
+              Log.w(TAG, "handleStateEvent: GetNationalDataNetworkEvent")
               
              return mainRepository.getNationalData(isNetworkRequest = true)
           }
           is GetTimeSeriesNetworkEvent -> {
-              Log.d(TAG, "handleStateEvent: GetTimeSeriesNetworkEvent")
+              Log.w(TAG, "handleStateEvent: GetTimeSeriesNetworkEvent")
 
               return mainRepository.getTimeSeries(isNetworkRequest = true)
           }
           is GetNationalResourceNetworkEvent -> {
-              Log.d(TAG, "handleStateEvent: GetNationalResourceNetworkEvent")
+              Log.w(TAG, "handleStateEvent: GetNationalResourceNetworkEvent")
               
               return mainRepository.getNationalResources(isNetworkRequest = true)
           }
           
           is GetNationalDataCacheEvent -> {
-              Log.d(TAG, "handleStateEvent: GetNationalDataCacheEvent")
+              Log.w(TAG, "handleStateEvent: GetNationalDataCacheEvent")
               
               return mainRepository.getNationalData(isNetworkRequest = false)
           }
           is GetTimeSeriesCacheEvent -> {
-              Log.d(TAG, "handleStateEvent: GetTimeSeriesCacheEvent")
+              Log.w(TAG, "handleStateEvent: GetTimeSeriesCacheEvent")
               return mainRepository.getTimeSeries(isNetworkRequest = false)
           }
           is GetNationalResourceCacheEvent -> {
-              Log.d(TAG, "handleStateEvent: GetNationalResourceCacheEvent")
+              Log.w(TAG, "handleStateEvent: GetNationalResourceCacheEvent")
               
               return mainRepository.getNationalResources(isNetworkRequest = false)
           }
           is WarnUsersOfContraction -> {
-              //    TODO: trigger push notifications
               return AbsentLiveData.create()
           }
 
